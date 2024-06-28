@@ -1,10 +1,21 @@
 <template>
     <div>
-      <h2 class="text-2xl">功能主页面</h2>
-      <p>这里是功能主页面的内容。</p>
+        <Sidebar />
+        <div class="main-content">
+            <ElderlyManagement v-if="currentPage === 'elderly'" />
+            <StaffManagement v-if="currentPage === 'staff'" />
+            <VolunteerManagement v-if="currentPage === 'volunteer'" />
+        </div>
     </div>
 </template>
 
 <script setup>
+import { ref, computed } from 'vue';
+import ElderlyManagement from '~/components/ElderlyManagement.vue';
+import StaffManagement from '~/components/StaffManagement.vue';
+import VolunteerManagement from '~/components/VolunteerManagement.vue';
+import { usePageStore } from '~/stores/pageStore';
 
+const store = usePageStore();
+const currentPage = computed(() => store.currentPage);
 </script>
