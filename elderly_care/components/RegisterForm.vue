@@ -118,4 +118,3 @@ const register = () => {
   // 处理注册逻辑，可以通过提交 registerForm 中的数据进行处理
 };
 </script>
-

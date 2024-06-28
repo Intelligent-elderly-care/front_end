@@ -12,8 +12,9 @@
 - layouts/ (布局文件夹，用于存放不同页面布局)
     - MainLayout.vue (主页布局文件)
 - pages/ (页面文件夹，用于存放各个页面)
-    - Index.vue (首页，可能是项目的入口页面)
-    - LoginRegister.vue (登录注册页面，包含登录和注册表单)
+    - index.vue (首页，先是用户登录注册)
+    - homePage (系统主页面)
+        - index.vue
 - plugins/ (插件文件夹，用于存放依赖或者第三方插件)
 - stores/ (存储文件夹，用于持久化存储相关的数据或状态)
 - components/ (组件文件夹，用于存放可复用的组件)
@@ -23,5 +24,3 @@
     - HomePage.vue (首页组件，如果需要进一步细分)
     - LoginForm.vue (登录表单组件)
     - RegisterForm.vue (注册表单组件)
-- router
-    - index.js (路由管理)

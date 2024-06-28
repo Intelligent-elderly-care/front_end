@@ -37,29 +37,15 @@
         </transition>
       </div>
     </div>
-  </template>
+</template>
   
-  <script setup>
-  import { ref } from 'vue';
+<script setup>
   import LoginForm from '../components/LoginForm.vue';
   import RegisterForm from '../components/RegisterForm.vue';
   
-  const isLoginForm = ref(true);
+  let isLoginForm = ref(true);
   
   const switchForm = () => {
     isLoginForm.value = !isLoginForm.value;
   };
-  </script>
-  
-  <style scoped>
-  .slide-fade-enter-active, .slide-fade-leave-active {
-    transition: transform 0.5s ease;
-  }
-  .slide-fade-enter-from {
-    transform: translateX(100%);
-  }
-  .slide-fade-leave-to {
-    transform: translateX(-100%);
-  }
-  </style>
-  
+</script>
