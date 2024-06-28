@@ -33,22 +33,25 @@
         </button>
       </div>
     </form>
-</template>
+  </template>
   
-<script setup>
-  const { $userStore } = useNuxtApp()
+  <script setup>
+  import { ref } from "vue";
+  import { useRouter } from "vue-router";
+  
   const router = useRouter();
   
-  const loginForm = {
-    username: '',
-    password: ''
-  };
+  const loginForm = ref({
+    username: "",
+    password: ""
+  });
   
-  // 假设成功登录逻辑
-  if (loginForm.username === '1726634055@qq.com' && loginForm.password === 'GJyg6841!') {
-    // 成功登录后跳转到首页或其他页面
-    router.push('/homepage');
-  } else {
-    alert('登录失败，请检查用户名和密码。');
-  }
-</script>
+  const login = () => {
+    if (loginForm.value.username === "1726634055@qq.com" && loginForm.value.password === "GJyg6841!") {
+      router.push("/homepage");
+    } else {
+      alert("登录失败，请检查用户名和密码。");
+    }
+  };
+  </script>
+  
