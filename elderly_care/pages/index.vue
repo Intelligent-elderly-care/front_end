@@ -1,11 +1,9 @@
 <template>
-    <div>
-        <div class="bg-red-500">
-            TESTING
-        </div>
-    </div>
+    <MainLayout>
+
+    </MainLayout>
 </template>
 
 <script setup>
-
+import MainLayout from "~/layouts/MainLayout.vue";
 </script>
