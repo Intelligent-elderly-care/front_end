@@ -1,6 +1,5 @@
 <template>
     <div>
-        <Sidebar />
         <div class="main-content">
             <ElderlyManagement v-if="currentPage === 'elderly'" />
             <StaffManagement v-if="currentPage === 'staff'" />
@@ -10,7 +9,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import ElderlyManagement from '~/components/ElderlyManagement.vue';
 import StaffManagement from '~/components/StaffManagement.vue';
 import VolunteerManagement from '~/components/VolunteerManagement.vue';

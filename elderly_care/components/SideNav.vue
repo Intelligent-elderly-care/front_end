@@ -1,6 +1,6 @@
 <template>
-    <div class="flex h-full">
-        <div :class="isOpen ? 'w-40' : 'w-60'" class="flex flex-col h-screen p-3 duration-300 bg-gray-800 shadow">
+    <div class="flex min-h-screen">
+        <div :class="isOpen ? 'w-40' : 'w-60'" class="flex flex-col min-h-screen p-3 duration-300 bg-gray-800 shadow">
             <div class="space-y-3">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xl font-bold text-white">智慧养老平台</h2>
