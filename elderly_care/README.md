@@ -5,6 +5,7 @@
 - `npx nuxi module add icon`
 - `npm i -D @pinia-plugin-persistedstate/nuxt -f`
 - `npm i pinia -f`
+- `npx nuxi@latest module add ant-design-vue`
 - 使用`npm run dev`启动项目
 
 # 项目结构
