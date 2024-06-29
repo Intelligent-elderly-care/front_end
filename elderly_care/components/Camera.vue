@@ -1,6 +1,6 @@
 <template>
     <div>
-        {{ 原神万岁！ }}
+        {{ "原神万岁!" }}
     </div>
 </template>
 
