@@ -11,7 +11,8 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/icon',
     '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt'
+    '@pinia-plugin-persistedstate/nuxt',
+    "@ant-design-vue/nuxt"
   ],
   build: {
     transpile: ['pinia-plugin-persistedstate'],

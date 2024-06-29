@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@ant-design-vue/nuxt": "^1.4.2",
     "@nuxt/icon": "^1.0.0",
     "@pinia/nuxt": "^0.5.1",
     "axios": "^1.7.2",
