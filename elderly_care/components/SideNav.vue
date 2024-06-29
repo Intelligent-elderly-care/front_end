@@ -51,16 +51,22 @@
                                         义工信息管理
                                     </button>
                                 </li>
+                                <li>
+                                    <button @click="setPage('event')" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-4 block w-full text-left rounded-md">
+                                        <Icon name="material-symbols:volunteer-activism" class="text-gray-100 mr-2" size="30"/>
+                                        事件管理
+                                    </button>
+                                </li>
                             </ul>
                         </li>
                         <li class="rounded-sm">
-                            <button @click="setPage('carema')" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer">
+                            <button @click="setPage('carema')" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer w-full">
                                 <Icon name="mage:camera" class="text-gray-100" size="30"/>
                                 <span class="text-gray-100">摄像头管理</span>
                             </button>
                         </li>
                         <li class="rounded-sm">
-                            <button @click="setPage('settings')" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer">
+                            <button @click="setPage('settings')" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer w-full">
                                 <Icon name="mage:settings" class="text-gray-100" size="30"/>
                                 <span class="text-gray-100">系统设置</span>
                             </button>

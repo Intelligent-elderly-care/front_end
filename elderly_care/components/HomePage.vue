@@ -4,6 +4,9 @@
             <ElderlyManagement v-if="currentPage === 'elderly'" />
             <StaffManagement v-if="currentPage === 'staff'" />
             <VolunteerManagement v-if="currentPage === 'volunteer'" />
+            <Event v-if="currentPage === 'event'" />
+            <Camera v-if="currentPage === 'camera'" />
+            <Settings v-if="currentPage === 'settings'" />
         </div>
     </div>
 </template>
