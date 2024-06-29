@@ -1,5 +1,5 @@
 <template>
-    <div class="flex">
+    <div class="flex h-full">
         <div :class="isOpen ? 'w-40' : 'w-60'" class="flex flex-col h-screen p-3 duration-300 bg-gray-800 shadow">
             <div class="space-y-3">
                 <div class="flex items-center justify-between">
@@ -74,7 +74,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { usePageStore } from '~/stores/pageStore';
+import { usePageStore } from '~/stores/page';
 
 const isOpen = ref(false);
 const toggleManageMenu = ref(false);

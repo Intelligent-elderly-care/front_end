@@ -77,6 +77,26 @@
                 </tr>
             </tbody>
         </table>
+
+        <div class="pagination flex justify-center items-center mt-4 space-x-4">
+              <button 
+                @click="previousPage" 
+                :disabled="currentPage === 1"
+                class="px-4 py-2 bg-blue-400 text-white rounded disabled:bg-gray-300 disabled:text-gray-500"
+              >
+                上一页
+              </button>
+              <span class="text-gray-700">
+                第 {{ currentPage }} 页
+              </span>
+              <button 
+                @click="nextPage" 
+                :disabled="currentPage === totalPages"
+                class="px-4 py-2 bg-blue-400 text-white rounded disabled:bg-gray-300 disabled:text-gray-500"
+              >
+                下一页
+              </button>
+          </div>
     </div>
   
       <!-- Modal -->
@@ -155,7 +175,16 @@
   
   const data = ref([
     { id: 1, gender: '男', phone: '12345678901', checkin_date: '2023-01-01', checkout_date: '2023-06-01', healthState: '健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 2, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' }
+    { id: 2, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
+    { id: 3, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
+    { id: 4, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
+    { id: 5, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
+    { id: 6, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
+    { id: 7, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
+    { id: 8, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
+    { id: 9, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
+    { id: 10, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
+    { id: 11, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
   ]);
   
   const searchText = ref('');
@@ -220,7 +249,22 @@
       description: ''
     });
   };
+
+  const currentPage = ref(1);
+  const pageSize = ref(10);
   
+const previousPage = () => {
+    if (currentPage.value > 1) {
+    currentPage.value--;
+    }
+};
+
+const nextPage = () => {
+    if (currentPage.value < 20) {
+        currentPage.value++;
+    }
+};
+
   const showEditModal = (record) => {
     isEdit.value = true;
     isModalVisible.value = true;

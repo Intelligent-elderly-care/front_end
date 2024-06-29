@@ -9,6 +9,10 @@ dist
 # Node dependencies
 node_modules
 
+# package-lock
+package-lock.json
+package.json
+
 # Logs
 logs
 *.log
