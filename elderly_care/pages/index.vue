@@ -19,7 +19,7 @@
         <a-input-password v-model:value="value" placeholder="请输入密码" style="width: 30vh;"/>
       </div>
       <a id="text" href="#" style="position: relative;left: 5vw;top: 20vh;font-size: 12px;color: rgb(24, 205, 255);">忘记密码?</a>
-      <a-button type="primary" id="btn" style="position: relative;width: 12vh;left: 5vw;top: 27vh;background-color: rgb(0, 200, 255);">登录</a-button>
+      <a-button type="primary" id="btn" style="position: relative;width: 12vh;left: 5vw;top: 27vh;background-color: rgb(0, 200, 255);" @click="submit">登录</a-button>
     </div>
     
     <div id="mask">
@@ -45,11 +45,10 @@ export default {
         }
     },
     methods:{
-        login(){
-        
-        },
-
-        register(){
+        submit(){
+          if(this.formMode == 0){
+            this.$router.push("/homepage");
+          }
         },
 
         move() {
@@ -66,7 +65,7 @@ export default {
           if(this.formMode == 0) {
             setTimeout(() => {
               this.formMode = 1;
-              mask.style.right = '100vh';
+              mask.style.right = '50vw';
               mask.style.borderTopLeftRadius = '20px';
               mask.style.borderBottomLeftRadius = '20px';
               mask.style.borderTopRightRadius = '25%';
@@ -99,7 +98,7 @@ export default {
           else if(this.formMode == 1) {
             setTimeout(() => {
               this.formMode = 0;
-              mask.style.right = '50vh';
+              mask.style.right = '25vw';
               mask.style.borderTopLeftRadius = '25%';
               mask.style.borderBottomLeftRadius = '25%';
               mask.style.borderTopRightRadius = '20px';
@@ -200,9 +199,10 @@ export default {
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
     box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.3); 
-    right: 50vh;
+    right: 25vw;
     z-index: 15;
     transition: 1s;
+    text-align: left;
   }
 
   .test {
