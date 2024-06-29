@@ -1,32 +1,33 @@
 <template>
     <div>
+        <!-- Search Section -->
         <div class="bg-white shadow rounded-lg p-6 mb-6">
             <div class="mb-4">
-            <label class="block text-black text-lg font-bold mb-2">输入搜索:</label>
-            <div class="flex items-center space-x-4">
-                <input
-                v-model="searchText"
-                @keypress.enter="handleSearch"
-                class="shadow appearance-none border rounded w-2/3 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="输入老人信息..."
-                />
-                <button
-                @click="handleSearch"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm"
-                >
-                查询搜索
-                </button>
-                <button
-                @click="handleReset"
-                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm"
-                >
-                重置
-                </button>
+                <label class="block text-black text-lg font-bold mb-2">输入搜索:</label>
+                <div class="flex items-center space-x-4">
+                    <input
+                    v-model="searchText"
+                    @keypress.enter="handleSearch"
+                    class="shadow appearance-none border rounded w-2/3 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    placeholder="输入老人信息..."
+                    />
+                    <button
+                    @click="handleSearch"
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm"
+                    >
+                    查询搜索
+                    </button>
+                    <button
+                    @click="handleReset"
+                    class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm"
+                    >
+                    重置
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div>
+        <!-- Add Info Button and Table Section -->
         <div class="bg-white shadow rounded-lg p-6 mb-6">
             <div class="mb-4">
                 <div class="flex justify-between items-center mb-4">
@@ -42,260 +43,171 @@
                     </button>
                 </div>
             </div>
+
+            <!-- Ant Design Table -->
+            <a-table :columns="columns" :data-source="filteredData" row-key="id">
+                <template #name="{ text }">
+                    <a>{{ text }}</a>
+                </template>
+                <template #gender="{ text }">
+                    <span>{{ text }}</span>
+                </template>
+                <template #phone="{ text }">
+                    <span>{{ text }}</span>
+                </template>
+                <template #checkin_date="{ text }">
+                    <span>{{ text }}</span>
+                </template>
+                <template #checkout_date="{ text }">
+                    <span>{{ text }}</span>
+                </template>
+                <template #healthState="{ text }">
+                    <span>{{ text }}</span>
+                </template>
+                <template #imgsetDir="{ text }">
+                    <img :src="text" alt="头像" class="w-10 h-10 rounded-full">
+                </template>
+                <template #description="{ text }">
+                    <span>{{ text }}</span>
+                </template>
+                <template #action="{ record }">
+                    <a @click="showEditModal(record)">修改信息</a>
+                    <a @click="handleDelete(record)" class="ml-4 text-red-500">删除</a>
+                </template>
+            </a-table>
         </div>
 
-        <table class="min-w-full bg-white">
-            <thead>
-                <tr>
-                <th class="py-3 px-4 border-b border-gray-200 text-left">编号</th>
-                <th class="py-3 px-4 border-b border-gray-200 text-left">性别</th>
-                <th class="py-3 px-4 border-b border-gray-200 text-left">手机号</th>
-                <th class="py-3 px-4 border-b border-gray-200 text-left">入院日期</th>
-                <th class="py-3 px-4 border-b border-gray-200 text-left">出院日期</th>
-                <th class="py-3 px-4 border-b border-gray-200 text-left">健康状况</th>
-                <th class="py-3 px-4 border-b border-gray-200 text-left">头像</th>
-                <th class="py-3 px-4 border-b border-gray-200 text-left">描述</th>
-                <th class="py-3 px-4 border-b border-gray-200 text-left">操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="record in filteredData" :key="record.id">
-                <td class="py-3 px-4 border-b border-gray-200">{{ record.id }}</td>
-                <td class="py-3 px-4 border-b border-gray-200">{{ record.gender }}</td>
-                <td class="py-3 px-4 border-b border-gray-200">{{ record.phone }}</td>
-                <td class="py-3 px-4 border-b border-gray-200">{{ record.checkin_date }}</td>
-                <td class="py-3 px-4 border-b border-gray-200">{{ record.checkout_date }}</td>
-                <td class="py-3 px-4 border-b border-gray-200">{{ record.healthState }}</td>
-                <td class="py-3 px-4 border-b border-gray-200">
-                    <img :src="record.imgsetDir" alt="头像" class="w-10 h-10 rounded-full">
-                </td>
-                <td class="py-3 px-4 border-b border-gray-200">{{ record.description }}</td>
-                <td class="py-3 px-4 border-b border-gray-200">
-                    <button @click="showEditModal(record)" class="text-blue-500 hover:text-blue-700">修改信息</button>
-                    <button @click="handleDelete(record)" class="text-red-500 hover:text-red-700 ml-4">删除</button>
-                </td>
-                </tr>
-            </tbody>
-        </table>
-
+        <!-- Pagination Section -->
         <div class="pagination flex justify-center items-center mt-4 space-x-4">
-              <button 
+            <button 
                 @click="previousPage" 
                 :disabled="currentPage === 1"
                 class="px-4 py-2 bg-blue-400 text-white rounded disabled:bg-gray-300 disabled:text-gray-500"
-              >
+            >
                 上一页
-              </button>
-              <span class="text-gray-700">
+            </button>
+            <span class="text-gray-700">
                 第 {{ currentPage }} 页
-              </span>
-              <button 
+            </span>
+            <button 
                 @click="nextPage" 
                 :disabled="currentPage === totalPages"
                 class="px-4 py-2 bg-blue-400 text-white rounded disabled:bg-gray-300 disabled:text-gray-500"
-              >
+            >
                 下一页
-              </button>
-          </div>
-    </div>
-  
-      <!-- Modal -->
-      <el-dialog :visible.sync="isModalVisible" title="添加/编辑信息">
-        <el-form :model="currentForm" :rules="rules" ref="formRef">
-          <!-- Form fields -->
-          <el-form-item label="名字" prop="name">
-            <el-input v-model="currentForm.name"></el-input>
-          </el-form-item>
-          <el-form-item label="性别" prop="gender">
-            <el-input v-model="currentForm.gender"></el-input>
-          </el-form-item>
-          <el-form-item label="手机号" prop="phone">
-            <el-input v-model="currentForm.phone"></el-input>
-          </el-form-item>
-          <el-form-item label="身份证" prop="id_card">
-            <el-input v-model="currentForm.id_card"></el-input>
-          </el-form-item>
-          <el-form-item label="入院日期" prop="checkin_date">
-            <el-date-picker v-model="currentForm.checkin_date" type="datetime" placeholder="选择日期时间"></el-date-picker>
-          </el-form-item>
-          <el-form-item label="出院日期" prop="checkout_date">
-            <el-date-picker v-model="currentForm.checkout_date" type="datetime" placeholder="选择日期时间"></el-date-picker>
-          </el-form-item>
-          <el-form-item label="生日" prop="birthday">
-            <el-date-picker v-model="currentForm.birthday" type="datetime" placeholder="选择日期时间"></el-date-picker>
-          </el-form-item>
-          <el-form-item label="头像URL" prop="imgsetDir">
-            <el-input v-model="currentForm.imgsetDir"></el-input>
-          </el-form-item>
-          <el-form-item label="房间号" prop="roomNumber">
-            <el-input v-model="currentForm.roomNumber"></el-input>
-          </el-form-item>
-          <el-form-item label="第一监护人名字" prop="firstGuardianName">
-            <el-input v-model="currentForm.firstGuardianName"></el-input>
-          </el-form-item>
-          <el-form-item label="与第一监护人关系" prop="firstGuardianRelationship">
-            <el-input v-model="currentForm.firstGuardianRelationship"></el-input>
-          </el-form-item>
-          <el-form-item label="第一监护人电话" prop="firstGuardianPhone">
-            <el-input v-model="currentForm.firstGuardianPhone"></el-input>
-          </el-form-item>
-          <el-form-item label="第一监护人微信" prop="firstGuardianWechat">
-            <el-input v-model="currentForm.firstGuardianWechat"></el-input>
-          </el-form-item>
-          <el-form-item label="第二监护人名字" prop="secondGuardianName">
-            <el-input v-model="currentForm.secondGuardianName"></el-input>
-          </el-form-item>
-          <el-form-item label="与第二监护人关系" prop="secondGuardianRelationship">
-            <el-input v-model="currentForm.secondGuardianRelationship"></el-input>
-          </el-form-item>
-          <el-form-item label="第二监护人电话" prop="secondGuardianPhone">
-            <el-input v-model="currentForm.secondGuardianPhone"></el-input>
-          </el-form-item>
-          <el-form-item label="第二监护人微信" prop="secondGuardianWechat">
-            <el-input v-model="currentForm.secondGuardianWechat"></el-input>
-          </el-form-item>
-          <el-form-item label="健康状况" prop="healthState">
-            <el-input v-model="currentForm.healthState"></el-input>
-          </el-form-item>
-          <el-form-item label="描述" prop="description">
-            <el-input v-model="currentForm.description"></el-input>
-          </el-form-item>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="isModalVisible = false">取消</el-button>
-          <el-button type="primary" @click="handleSubmit">确定</el-button>
-        </span>
-      </el-dialog>
+            </button>
+        </div>
+
+        <!-- Modal Section -->
+        <a-modal v-model:visible="isModalVisible" title="添加/编辑信息" @ok="handleSubmit" @cancel="isModalVisible = false">
+            <a-form :form="formRef" :rules="rules" layout="vertical">
+                <a-form-item label="名字" name="name">
+                    <a-input v-model:value="currentForm.name" />
+                </a-form-item>
+                <a-form-item label="性别" name="gender">
+                    <a-input v-model:value="currentForm.gender" />
+                </a-form-item>
+                <a-form-item label="手机号" name="phone">
+                    <a-input v-model:value="currentForm.phone" />
+                </a-form-item>
+                <a-form-item label="身份证" name="id_card">
+                    <a-input v-model:value="currentForm.id_card" />
+                </a-form-item>
+                <a-form-item label="入院日期" name="checkin_date">
+                    <a-date-picker v-model:value="currentForm.checkin_date" show-time format="YYYY-MM-DD HH:mm:ss" />
+                </a-form-item>
+                <a-form-item label="出院日期" name="checkout_date">
+                    <a-date-picker v-model:value="currentForm.checkout_date" show-time format="YYYY-MM-DD HH:mm:ss" />
+                </a-form-item>
+                <a-form-item label="生日" name="birthday">
+                    <a-date-picker v-model:value="currentForm.birthday" show-time format="YYYY-MM-DD HH:mm:ss" />
+                </a-form-item>
+                <a-form-item label="头像URL" name="imgsetDir">
+                    <a-input v-model:value="currentForm.imgsetDir" />
+                </a-form-item>
+                <a-form-item label="房间号" name="roomNumber">
+                    <a-input v-model:value="currentForm.roomNumber" />
+                </a-form-item>
+                <a-form-item label="第一监护人名字" name="firstGuardianName">
+                    <a-input v-model:value="currentForm.firstGuardianName" />
+                </a-form-item>
+                <a-form-item label="与第一监护人关系" name="firstGuardianRelationship">
+                    <a-input v-model:value="currentForm.firstGuardianRelationship" />
+                </a-form-item>
+                <a-form-item label="第一监护人电话" name="firstGuardianPhone">
+                    <a-input v-model:value="currentForm.firstGuardianPhone" />
+                </a-form-item>
+                <a-form-item label="第一监护人微信" name="firstGuardianWechat">
+                    <a-input v-model:value="currentForm.firstGuardianWechat" />
+                </a-form-item>
+                <a-form-item label="第二监护人名字" name="secondGuardianName">
+                    <a-input v-model:value="currentForm.secondGuardianName" />
+                </a-form-item>
+                <a-form-item label="与第二监护人关系" name="secondGuardianRelationship">
+                    <a-input v-model:value="currentForm.secondGuardianRelationship" />
+                </a-form-item>
+                <a-form-item label="第二监护人电话" name="secondGuardianPhone">
+                    <a-input v-model:value="currentForm.secondGuardianPhone" />
+                </a-form-item>
+                <a-form-item label="第二监护人微信" name="secondGuardianWechat">
+                    <a-input v-model:value="currentForm.secondGuardianWechat" />
+                </a-form-item>
+                <a-form-item label="健康状况" name="healthState">
+                    <a-input v-model:value="currentForm.healthState" />
+                </a-form-item>
+                <a-form-item label="描述" name="description">
+                    <a-input v-model:value="currentForm.description" />
+                </a-form-item>
+            </a-form>
+        </a-modal>
     </div>
 </template>
-  
+
 <script setup>
-  import { ref, reactive, computed, onMounted } from 'vue';
-  import { ElMessage, ElDialog, ElForm, ElFormItem, ElInput, ElDatePicker, ElButton } from 'element-plus';
-  
-  const data = ref([
+import { ref, reactive, computed } from 'vue';
+import { message, Modal, Form, Input, DatePicker, Button, Table } from 'ant-design-vue';
+
+const data = ref([
     { id: 1, gender: '男', phone: '12345678901', checkin_date: '2023-01-01', checkout_date: '2023-06-01', healthState: '健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 2, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 3, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 4, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 5, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 6, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 7, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 8, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 9, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 10, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 11, gender: '女', phone: '12345678902', checkin_date: '2022-01-01', checkout_date: '2022-06-01', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-  ]);
-  
-  const searchText = ref('');
-  const isModalVisible = ref(false);
-  const isEdit = ref(false);
-  const currentForm = reactive({});
-  const formRef = ref(null);
-  
-  const rules = {
-    name: [{ required: true, message: '请输入名字', trigger: 'blur' }],
-    gender: [{ required: true, message: '请输入性别', trigger: 'blur' }],
-    phone: [{ required: true, message: '请输入手机号', trigger: 'blur' }],
-    id_card: [{ required: true, message: '请输入身份证号', trigger: 'blur' }],
-    checkin_date: [{ required: true, message: '请选择入院日期', trigger: 'blur' }],
-    checkout_date: [{ required: true, message: '请选择出院日期', trigger: 'blur' }],
-    birthday: [{ required: true, message: '请选择生日', trigger: 'blur' }],
-    imgsetDir: [{ required: true, message: '请输入头像URL', trigger: 'blur' }],
-    roomNumber: [{ required: true, message: '请输入房间号', trigger: 'blur' }],
-    firstGuardianName: [{ required: true, message: '请输入第一监护人名字', trigger: 'blur' }],
-    firstGuardianRelationship: [{ required: true, message: '请输入与第一监护人关系', trigger: 'blur' }],
-    firstGuardianPhone: [{ required: true, message: '请输入第一监护人电话', trigger: 'blur' }],
-    firstGuardianWechat: [{ required: true, message: '请输入第一监护人微信', trigger: 'blur' }],
-    secondGuardianName: [{ required: true, message: '请输入第二监护人名字', trigger: 'blur' }],
-    secondGuardianRelationship: [{ required: true, message: '请输入与第二监护人关系', trigger: 'blur' }],
-    secondGuardianPhone: [{ required: true, message: '请输入第二监护人电话', trigger: 'blur' }],
-    secondGuardianWechat: [{ required: true, message: '请输入第二监护人微信', trigger: 'blur' }],
-    healthState: [{ required: true, message: '请输入健康状况', trigger: 'blur' }],
-    description: [{ required: true, message: '请输入描述', trigger: 'blur' }]
-  };
-  
-  const handleSearch = () => {
-    // TODO:搜索逻辑
-  };
-  
-  const handleReset = () => {
-    searchText.value = '';
-  };
-  
-  const showAddModal = () => {
-    console.log("add success!")
-    isEdit.value = false;
-    isModalVisible.value = true;
-    Object.assign(currentForm, {
-      name: '',
-      gender: '',
-      phone: '',
-      id_card: '',
-      checkin_date: '',
-      checkout_date: '',
-      birthday: '',
-      imgsetDir: '',
-      roomNumber: '',
-      firstGuardianName: '',
-      firstGuardianRelationship: '',
-      firstGuardianPhone: '',
-      firstGuardianWechat: '',
-      secondGuardianName: '',
-      secondGuardianRelationship: '',
-      secondGuardianPhone: '',
-      secondGuardianWechat: '',
-      healthState: '',
-      description: ''
-    });
-  };
+    { id: 2, gender: '女', phone: '12345678902', checkin_date: '2023-02-01', checkout_date: '2023-06-02', healthState: '健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
+]);
 
-  const currentPage = ref(1);
-  const pageSize = ref(10);
-  
-const previousPage = () => {
-    if (currentPage.value > 1) {
-    currentPage.value--;
-    }
-};
-
-const nextPage = () => {
-    if (currentPage.value < 20) {
-        currentPage.value++;
-    }
-};
-
-  const showEditModal = (record) => {
-    isEdit.value = true;
-    isModalVisible.value = true;
-    Object.assign(currentForm, record);
-  };
-  
-  const handleSubmit = () => {
-    formRef.value.validate((valid) => {
-      if (valid) {
-        if (isEdit.value) {
-          // 编辑逻辑
-        } else {
-          // 添加逻辑
-          currentForm.id = data.value.length + 1;
-          data.value.push({ ...currentForm });
-        }
-        isModalVisible.value = false;
-        ElMessage.success('操作成功');
-      }
-    });
-  };
-  
-  const handleDelete = (record) => {
-    data.value = data.value.filter(item => item.id !== record.id);
-    ElMessage.success('删除成功');
-  };
-  
-  const filteredData = computed(() => {
+const searchText = ref('');
+const filteredData = computed(() => {
     if (!searchText.value) return data.value;
-    return data.value.filter(item => {
-      return Object.values(item).some(value => value.toString().includes(searchText.value));
-    });
-  });
+    return data.value.filter(item => item.name.includes(searchText.value) || item.phone.includes(searchText.value));
+});
+
+const currentPage = ref(1);
+const totalPages = computed(() => Math.ceil(filteredData.value.length / 10));
+const showAddModal = () => { isModalVisible.value = true; currentForm = {} };
+const showEditModal = (record) => { isModalVisible.value = true; currentForm = { ...record }; };
+const handleDelete = (record) => { data.value = data.value.filter(item => item.id !== record.id); message.success('删除成功'); };
+const handleSubmit = () => {
+    const index = data.value.findIndex(item => item.id === currentForm.id);
+    if (index === -1) {
+        data.value.push({ ...currentForm, id: Date.now() });
+        message.success('添加成功');
+    } else {
+        data.value[index] = currentForm;
+        message.success('更新成功');
+    }
+    isModalVisible.value = false;
+};
+
+const isModalVisible = ref(false);
+let currentForm = reactive({});
+
+const columns = [
+    { title: '名字', dataIndex: 'name', key: 'name', scopedSlots: { customRender: 'name' } },
+    { title: '性别', dataIndex: 'gender', key: 'gender', scopedSlots: { customRender: 'gender' } },
+    { title: '手机号', dataIndex: 'phone', key: 'phone', scopedSlots: { customRender: 'phone' } },
+    { title: '身份证', dataIndex: 'id_card', key: 'id_card', scopedSlots: { customRender: 'id_card' } },
+    { title: '入院日期', dataIndex: 'checkin_date', key: 'checkin_date', scopedSlots: { customRender: 'checkin_date' } },
+    { title: '出院日期', dataIndex: 'checkout_date', key: 'checkout_date', scopedSlots: { customRender: 'checkout_date' } },
+    { title: '健康状况', dataIndex: 'healthState', key: 'healthState', scopedSlots: { customRender: 'healthState' } },
+    { title: '头像', dataIndex: 'imgsetDir', key: 'imgsetDir', scopedSlots: { customRender: 'imgsetDir' } },
+    { title: '描述', dataIndex: 'description', key: 'description', scopedSlots: { customRender: 'description' } },
+    { title: '操作', key: 'action', scopedSlots: { customRender: 'action' } },
+];
 </script>
