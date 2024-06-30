@@ -16,7 +16,7 @@
       </div>
       
       <div style="position: relative;left: 5vw;top: 16vh;width: 30vh;" id="password">
-        <a-input-password v-model:value="value" placeholder="请输入密码" style="width: 30vh;"/>
+        <a-input-password v-model:value="password" placeholder="请输入密码" style="width: 30vh;"/>
       </div>
       <a id="text" href="#" style="position: relative;left: 5vw;top: 20vh;font-size: 12px;color: rgb(24, 205, 255);">忘记密码?</a>
       <a-button type="primary" id="btn" style="position: relative;width: 12vh;left: 5vw;top: 27vh;background-color: rgb(0, 200, 255);" @click="submit">登录</a-button>
@@ -32,22 +32,66 @@
   
 <script>
 import axios from 'axios';
+import { message } from 'ant-design-vue';
 export default {
     name: 'Login',
     data() {
         return {
             formMode: 0,
-            username_login: '',
-            password_login: '',
-            username_register: '',
-            password_register: '',
+            username: '',
+            password: '',
             intervalId: null,
         }
     },
     methods:{
         submit(){
+          if(this.password == '' || this.username == ''){
+            message.error('用户名或密码不能为空', 2);
+            return;
+          }
+          console.log(this.username, this.password);
           if(this.formMode == 0){
-            this.$router.push("/homepage");
+            // 登录
+            const url = 'http://localhost:9000/login';
+            const json_data = {
+              "username": this.username,
+              "password": this.password,
+            };
+            axios.post(url, json_data).then((response)=>{
+              if(response.data.code == 0){
+                message.success('登录成功', 2);
+                const token = response.data.data;
+                localStorage.setItem("token",token);
+                this.$router.push("/homepage");
+              }
+              else{
+                message.error('用户名或密码不正确', 2);
+                return;
+              }
+            })
+            .catch(err => {
+              message.error('用户名或密码不正确', 2);
+            })
+          }
+          else if(this.formMode == 1){
+            // 注册
+            const url = 'http://localhost:9000/register';
+            const json_data = {
+              "username": this.username,
+              "password": this.password,
+            };
+            axios.post(url, json_data).then((response)=>{
+              if(response.data.code == 0){
+                message.success('注册成功', 2);
+              }
+              else{
+                message.error(response.data.message, 2);
+                return;
+              }
+            })
+            .catch(err => {
+              message.error('注册失败', 2);
+            })
           }
         },
 
@@ -89,7 +133,7 @@ export default {
               btn.style.left = '30vw';
               btn.innerText = "注册";
 
-              p1.innerText = '欢饮回来!';
+              p1.innerText = '欢迎回来!';
               p2.innerText = '注册您的个人信息, 以获取网站的所有功能';
 
               btn_2.innerText = '开始登录';
