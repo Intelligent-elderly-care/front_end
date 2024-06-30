@@ -62,6 +62,7 @@ export default {
                 message.success('登录成功', 2);
                 const token = response.data.data;
                 localStorage.setItem("token",token);
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
                 this.$router.push("/homepage");
               }
               else{

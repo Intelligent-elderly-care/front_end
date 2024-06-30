@@ -125,10 +125,16 @@
 <script setup>
 import { ref, reactive, computed } from 'vue';
 import { message } from 'ant-design-vue';
+import axios from 'axios';
+
+// import { useElderlyStore } from '~/stores/elderly';
+
+// const store = useElderlyStore();
 
 const searchText = ref('');
 const isModalVisible = ref(false);
 let currentForm = reactive({});
+const data1 = ref([]);
 
 const data = ref([
     { id: 1, name:'骐哥', gender: '男', phone: '12345678901', checkin_date: '2023-01-01', checkout_date: '2023-06-01', healthState: '健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
@@ -176,6 +182,38 @@ const rules = reactive({
     { min: 18, max: 18, message: '身份证号码长度应为18位' }
   ]
 });
+
+axios.defaults.baseURL = 'http://localhost:9000'
+
+const loadData = async () => {
+    try {
+        const response = await axios.get("/oldpersons/findAll");
+        if (response && response.data && response.data.data) {
+            const elderlies = response.data.data;
+            // 打印获取的数据
+            console.log("response.data.data:", elderlies);
+
+            // 更新 data 源
+            data1.value = elderlies.map(elder => ({
+                id: elder.id,
+                name: elder.name,
+                gender: elder.gender,
+                phone: elder.phone,
+                checkin_date: elder.checkin_date,
+                checkout_date: elder.checkout_date,
+                healthState: elder.health_state,
+                imgsetDir: elder.imgset_dir,
+                description: elder.description
+            }));
+        } else {
+            console.error('Unexpected response structure:', response);
+        }
+    } catch (error) {
+        console.error('Error fetching all data:', error);
+    }
+};
+
+onMounted(loadData);
 
 const filteredData = computed(() => {
     if (!searchText.value) return data.value;

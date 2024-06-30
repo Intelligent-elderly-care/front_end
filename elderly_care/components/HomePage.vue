@@ -20,4 +20,8 @@ import { usePageStore } from '~/stores/page';
 
 const store = usePageStore();
 const currentPage = computed(() => store.currentPage);
+
+// const { $pageStore } = useNuxtApp()
+
+// const currentPage = $pageStore.currentPage;
 </script>
