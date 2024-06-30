@@ -42,7 +42,7 @@
                 </div>
             </div>
 
-            <a-table :columns="columns" :data-source="data" row-key="id" bordered>
+            <a-table :columns="columns" :data-source="data" row-key="id" :pagination="{ position: ['bottomCenter'],pageSize: 8 }" bordered>
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'action'">
                         <span>
@@ -111,9 +111,8 @@ const showAddModal = () => {
     currentForm = {} 
 };
 
-const showEditModal = (record) => { 
+const showEditModal = (id) => { 
     isModalVisible.value = true;
-    currentForm = { ...record }; 
 };
 
 const handleDelete = (record) => { 

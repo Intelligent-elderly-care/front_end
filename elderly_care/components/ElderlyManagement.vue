@@ -42,7 +42,7 @@
                 </div>
             </div>
 
-            <a-table :columns="columns" :data-source="data" row-key="id" :pagination="{ position: ['bottomCenter'],pageSize: 5 }" :scroll="{y: 250}" bordered>
+            <a-table :columns="columns" :data-source="data" row-key="id" :pagination="{ position: ['bottomCenter'],pageSize: 8 }" bordered>
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'imgsetDir'">
                         <Icon :name="record.imgsetDir" size="30" />
@@ -130,8 +130,6 @@ const searchText = ref('');
 const isModalVisible = ref(false);
 let currentForm = reactive({});
 
-let showUpdate = false;
-
 const data = ref([
     { id: 1, name:'骐哥', gender: '男', phone: '12345678901', checkin_date: '2023-01-01', checkout_date: '2023-06-01', healthState: '健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
     { id: 2, name:'骐狗', gender: '女', phone: '12345678902', checkin_date: '2023-02-01', checkout_date: '2023-06-02', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
@@ -202,7 +200,6 @@ const showAddModal = () => {
 const showEditModal = (id) => { 
     isModalVisible.value = true;
     console.log(id) 
-    // currentForm = { ...record }; 
 };
 
 const handleDelete = (record) => { 

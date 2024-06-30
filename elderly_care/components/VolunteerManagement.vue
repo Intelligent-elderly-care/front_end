@@ -42,14 +42,14 @@
                 </div>
             </div>
 
-            <a-table :columns="columns" :data-source="data" row-key="id" bordered>
+            <a-table :columns="columns" :data-source="data" row-key="id" :pagination="{ position: ['bottomCenter'],pageSize: 8 }" bordered>
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'imgsetDir'">
                         <Icon :name="record.imgsetDir" size="30" />
                     </template>
                     <template v-if="column.key === 'action'">
                         <span>
-                            <a @click="showEditModal(record)" class="text-blue-500 hover:text-blue-700">修改信息</a>
+                            <a @click="showEditModal(record.id)" class="text-blue-500 hover:text-blue-700">修改信息</a>
                             <a-divider type="vertical" />
                             <a @click="handleDelete(record)" class="text-red-500 hover:text-red-700">删除</a>
                         </span>
@@ -157,9 +157,8 @@ const showAddModal = () => {
     currentForm = {} 
 };
 
-const showEditModal = (record) => { 
+const showEditModal = (id) => { 
     isModalVisible.value = true;
-    currentForm = { ...record }; 
 };
 
 const handleDelete = (record) => { 
