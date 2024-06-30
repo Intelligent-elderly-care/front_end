@@ -60,7 +60,7 @@
                             </ul>
                         </li>
                         <li class="rounded-sm">
-                            <button @click="setPage('carema')" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer w-full">
+                            <button @click="setPage('camera')" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer w-full">
                                 <Icon name="mage:camera" class="text-gray-100" size="30"/>
                                 <span class="text-gray-100">摄像头管理</span>
                             </button>
