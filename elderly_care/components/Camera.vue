@@ -2,12 +2,24 @@
     <div id="container">
         <div class="bg-white shadow rounded-lg p-6 mb-6" style="width: 100%;">
             <div class="mb-4">
-                <a-button type="primary" id="btn" style="background-color: #3a475a;" @click="start">开始检测</a-button>
-                <a-button type="primary" id="btn" style="background-color: #3a475a;" @click="stop">停止检测</a-button>
+                <div style="display: flex;justify-content: center;align-items: center;gap: 20px; ">
+                    <a-button type="primary" id="btn" style="background-color: #3a475a;" @click="open">开始检测</a-button>
+                    <a-button type="primary" id="btn" style="background-color: #3a475a;" @click="close">停止检测</a-button>
+                </div>  
             </div>
         </div>
-        
-        <video ref="videoElement" autoplay playsinline id="camera"></video>
+        <div class="bg-white shadow rounded-lg p-6 mb-6" style="width: 100%;">
+            <div class="mb-4">
+                <div v-if="cameraOn">
+                    <iframe :src="src" frameborder="0" id="on" scrolling="no"></iframe>
+                </div>
+                <div v-else>
+                    <div id="off">
+                        <img src="../assets/img/camera.png" style="width: 20vh;height: 20vh">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -17,53 +29,20 @@ export default {
     name: 'Login',
     data() {
         return {
-            formMode: 0,
-            username_login: '',
-            password_login: '',
-            username_register: '',
-            password_register: '',
-            intervalId: null,
+            src: "/face.html",
+            cameraOn: false, 
         }
     },
     methods:{
-        async initCamera() {
-            try {
-                const videoElement = this.$refs.videoElement;
-
-                // 检查浏览器是否支持 getUserMedia
-                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                // 请求用户许可访问摄像头
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-
-                // 将视频流绑定到video元素上
-                videoElement.srcObject = stream;
-                } else {
-                console.error('浏览器不支持getUserMedia');
-                }
-            } catch (error) {
-                console.error('获取摄像头失败：', error);
-            }
+        open() {
+            this.cameraOn = true;
         },
-        stopCamera() {
-            const videoElement = this.$refs.videoElement;
-            const stream = videoElement.srcObject;
-
-            // 停止视频流
-            if (stream) {
-                const tracks = stream.getTracks();
-                tracks.forEach(track => track.stop());
-                videoElement.srcObject = null;
-            }
-        },
-        start() {
-            this.initCamera();
-        },
-        stop() {
-            this.stopCamera();
+        close() {
+            this.cameraOn = false;
         }
+        
     },
     mounted() {
-        // this.initCamera();
     },
 }
 </script>
@@ -87,4 +66,24 @@ export default {
     width: 100%;
     height: 70vh;
 }
+
+#on {
+    width: 100%;
+    height: 65vh;
+    overflow: hidden;
+    border: 2px solid #3a475a;
+    border-radius: 10px;
+    /* background-color: red; */
+}
+
+#off {
+    border: 2px solid #3a475a;
+    border-radius: 10px;
+    width: 100%;
+    height: 65vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 </style>
