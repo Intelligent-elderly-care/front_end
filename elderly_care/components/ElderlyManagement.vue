@@ -58,7 +58,7 @@
             </a-table>
         </div>
 
-        <a-modal v-model:visible="isModalVisible" title="老人信息" @ok="handleSubmit" @cancel="isModalVisible = false">
+        <a-modal v-model:open="showUpdate" title="老人信息" @ok="handleSubmit" @cancel="isModalVisible = false">
             <a-form :form="formRef" :rules="rules" layout="vertical">
                 <a-form-item label="名字" name="name" :rules="rules.name">
                     <a-input v-model:value="currentForm.name" />
@@ -130,6 +130,8 @@ const searchText = ref('');
 const isModalVisible = ref(false);
 let currentForm = reactive({});
 
+let showUpdate = false;
+
 const data = ref([
     { id: 1, name:'骐哥', gender: '男', phone: '12345678901', checkin_date: '2023-01-01', checkout_date: '2023-06-01', healthState: '健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
     { id: 2, name:'骐狗', gender: '女', phone: '12345678902', checkin_date: '2023-02-01', checkout_date: '2023-06-02', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
@@ -184,13 +186,22 @@ const filteredData = computed(() => {
 
 const showAddModal = () => { 
     isModalVisible.value = true; 
-    currentForm = {} 
+    Object.assign(currentForm, {
+        name: '',
+        gender: '',
+        phone: '',
+        id_card: '',
+        checkin_date: null,
+        checkout_date: null,
+        birthday: null,
+        imgsetDir: '',
+        description: ''
+    }); 
 };
 
-const showEditModal = (id) => { 
+const showEditModal = (record) => { 
     isModalVisible.value = true; 
     currentForm = { ...record }; 
-    console.log(id)
 };
 
 const handleDelete = (record) => { 
