@@ -199,9 +199,10 @@ const showAddModal = () => {
     }); 
 };
 
-const showEditModal = (record) => { 
-    isModalVisible.value = true; 
-    currentForm = { ...record }; 
+const showEditModal = (id) => { 
+    isModalVisible.value = true;
+    console.log(id) 
+    // currentForm = { ...record }; 
 };
 
 const handleDelete = (record) => { 
