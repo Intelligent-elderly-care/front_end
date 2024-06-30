@@ -58,7 +58,7 @@
             </a-table>
         </div>
 
-        <a-modal v-model:open="showUpdate" title="老人信息" @ok="handleSubmit" @cancel="isModalVisible = false">
+        <a-modal v-model:visible="isModalVisible" title="老人信息" @ok="handleSubmit" @cancel="isModalVisible = false">
             <a-form :form="formRef" :rules="rules" layout="vertical">
                 <a-form-item label="名字" name="name" :rules="rules.name">
                     <a-input v-model:value="currentForm.name" />
