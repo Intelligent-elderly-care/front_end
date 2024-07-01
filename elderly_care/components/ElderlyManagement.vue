@@ -197,11 +197,6 @@ const loadData = async () => {
 
 onMounted(loadData);
 
-const filteredData = computed(() => {
-    if (!searchText.value) return data.value;
-    return data.value.filter(item => item.name.includes(searchText.value) || item.phone.includes(searchText.value));
-});
-
 const showAddModal = () => { 
     isUpdating.value = false;
     isModalVisible.value = true;
