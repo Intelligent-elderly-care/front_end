@@ -51,6 +51,7 @@ export const useElderlyStore = defineStore('elderly', {
     // 修改老人信息
     async updateData(updatedElderly) {
       try {
+        console.log(updatedElderly)
         const response = await $axios.post('/oldpersons/update', updatedElderly, {
           headers: {
               'Content-Type': 'application/json'

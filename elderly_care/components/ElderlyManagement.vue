@@ -136,6 +136,7 @@ const isModalVisible = ref(false);
 const data = ref([]);
 // 用于区分是新增信息还是修改信息
 const isUpdating = ref(false);
+const updateId = ref(0)
 
 const currentForm = reactive({
     name: '',
@@ -220,6 +221,7 @@ const showAddModal = () => {
 const showUpdateModal = (id) => { 
     isUpdating.value = true;
     isModalVisible.value = true;
+    updateId.value = id
 };
 
 const handleDelete = async (id) => { 
@@ -230,7 +232,8 @@ const handleDelete = async (id) => {
 
 const handleSubmit = async () => {
     if (isUpdating.value) {
-        await store.updateData(currentForm);
+        const updatedElderly = { ...currentForm, id: updateId.value };
+        await store.updateData(updatedElderly);
         message.success('修改成功!');
     }
     else {
