@@ -3,9 +3,9 @@ import axios from '../plugins/axios'
 
 const $axios = axios().provide.axios
 
-export const useStaffStore = defineStore('staff', {
+export const useEventStore = defineStore('event', {
   state: () => ({
-    staff: [],
+    event: [],
     searchResults: []
   }),
   actions: {
@@ -14,17 +14,14 @@ export const useStaffStore = defineStore('staff', {
       try {
           const response = await $axios.get("/events/findAll");
           if (response && response.data && response.data.data) {
-              const staffs = response.data.data
-              this.$state.staff = staffs.map(staff => ({
-                  id: staff.id,
-                  name: staff.name,
-                  gender: staff.gender,
-                  phone: staff.phone,
-                  checkin_date: staff.checkin_date,
-                  checkout_date: staff.checkout_date,
-                  health_state: staff.health_state,
-                  imgSetDir: staff.imgset_dir,
-                  description: staff.description
+              const events = response.data.data
+              this.$state.event = events.map(event => ({
+                  id: event.id,
+                  event_type: event.event_type,
+                  event_date: event.event_date,
+                  event_location: event.event_location,
+                  event_desc: event.event_desc,
+                  oldperson_id: event.oldperson_id
               }));
         } else {
           console.error('Unexpected response structure:', response);
@@ -35,9 +32,9 @@ export const useStaffStore = defineStore('staff', {
     },
 
     // 添加老人信息
-    async addData(newStaff) {
+    async addData(newEvent) {
       try {
-        const response = await $axios.put('/events/add', newStaff, {
+        const response = await $axios.put('/events/add', newEvent, {
           headers: {
               'Content-Type': 'application/json'
           }
@@ -50,10 +47,10 @@ export const useStaffStore = defineStore('staff', {
     },
 
     // 修改老人信息
-    async updateData(updatedStaff) {
+    async updateData(updatedEvent) {
       try {
-        console.log(updatedStaff)
-        const response = await $axios.post('/events/update', updatedStaff, {
+        console.log(updatedEvent)
+        const response = await $axios.post('/events/update', updatedEvent, {
           headers: {
               'Content-Type': 'application/json'
           }
@@ -66,25 +63,18 @@ export const useStaffStore = defineStore('staff', {
     },
 
     // 查询老人信息
-    async searchData(name) {
+    async searchData(type) {
       try {
-          const response = await $axios.get('/events/findByName', {
-            params: {
-              name: name
-            }
-          });
+          const response = await $axios.get(`/events/findByType/${type}`);
           if (response && response.data && response.data.data) {
               const results = response.data.data
               this.$state.searchResults = results.map(result => ({
-                  id: result.id,
-                  name: result.name,
-                  gender: result.gender,
-                  phone: result.phone,
-                  checkin_date: result.checkin_date,
-                  checkout_date: result.checkout_date,
-                  health_state: result.health_state,
-                  imgSetDir: result.imgset_dir,
-                  description: result.description
+                id: result.id,
+                event_type: result.event_type,
+                event_date: result.event_date,
+                event_location: result.event_location,
+                event_desc: result.event_desc,
+                oldperson_id: result.oldperson_id
               }));
         } else {
           console.error('Unexpected response structure:', response);

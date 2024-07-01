@@ -6,12 +6,12 @@
                 <div class="flex items-center space-x-4">
                     <input
                     v-model="searchText"
-                    @keypress.enter="handleSearch"
+                    @keypress.enter="handleSearch(searchText)"
                     class="shadow appearance-none border rounded w-2/3 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     placeholder="输入事件信息..."
                     />
                     <button
-                    @click="handleSearch"
+                    @click="handleSearch(searchText)"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm"
                     >
                     查询搜索
@@ -42,13 +42,13 @@
                 </div>
             </div>
 
-            <a-table :columns="columns" :data-source="data" row-key="id" :pagination="{ position: ['bottomCenter'],pageSize: 8 }" bordered>
+            <a-table :columns="columns" :data-source="data" row-key="id" :pagination="{ position: ['bottomCenter'], pageSize: 8,}" bordered>
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'action'">
                         <span>
-                            <a @click="showEditModal(record)" class="text-blue-500 hover:text-blue-700">修改信息</a>
+                            <a @click="showUpdateModal(record.id)" class="text-blue-500 hover:text-blue-700">修改信息</a>
                             <a-divider type="vertical" />
-                            <a @click="handleDelete(record)" class="text-red-500 hover:text-red-700">删除</a>
+                            <a @click="handleDelete(record.id)" class="text-red-500 hover:text-red-700">删除</a>
                         </span>
                     </template>
                 </template>
@@ -57,17 +57,20 @@
 
         <a-modal v-model:visible="isModalVisible" title="义工信息" @ok="handleSubmit" @cancel="isModalVisible = false">
             <a-form :form="formRef" :rules="rules" layout="vertical">
-                <a-form-item label="事件类型" name="type" :rules="rules.type">
-                    <a-input v-model:value="currentForm.type" />
+                <a-form-item label="事件类型" name="event_type" :rules="rules.event_type">
+                    <a-input v-model:value="currentForm.event_type" />
                 </a-form-item>
                 <a-form-item label="发生时间" name="event_date">
                     <a-date-picker v-model:value="currentForm.event_date" show-time format="YYYY-MM-DD HH:mm:ss" />
                 </a-form-item>
-                <a-form-item label="地点" name="position" :rules="rules.position">
-                    <a-input v-model:value="currentForm.position" />
+                <a-form-item label="地点" name="event_location">
+                    <a-input v-model:value="currentForm.event_location" />
                 </a-form-item>
-                <a-form-item label="事件描述" name="description">
-                    <a-input v-model:value="currentForm.description" />
+                <a-form-item label="事件描述" name="event_desc">
+                    <a-input v-model:value="currentForm.event_desc" />
+                </a-form-item>
+                <a-form-item label="老人ID" name="oldperson_id">
+                    <a-input v-model:value="currentForm.oldperson_id" />
                 </a-form-item>
             </a-form>
         </a-modal>
@@ -75,69 +78,101 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive} from 'vue';
 import { message } from 'ant-design-vue';
+
+import { useEventStore } from '~/stores/event';
+
+const router = useRouter()
+const store = useEventStore();
 
 const searchText = ref('');
 const isModalVisible = ref(false);
-let currentForm = reactive({});
 
-const data = ref([
-
-]);
+const data = ref([]);
+// 用于区分是新增信息还是修改信息
+const isUpdating = ref(false);
+const updateId = ref(0)
 
 const columns = [
     { title: '编号', dataIndex: 'id', key: 'id', scopedSlots: { customRender: 'id' } },
-    { title: '事件类型', dataIndex: 'type', key: 'type', scopedSlots: { customRender: 'type' } },
+    { title: '事件类型', dataIndex: 'event_type', key: 'event_type', scopedSlots: { customRender: 'event_type' } },
     { title: '发生时间', dataIndex: 'event_date', key: 'event_date', scopedSlots: { customRender: 'event_date' } },
-    { title: '地点', dataIndex: 'position', key: 'position', scopedSlots: { customRender: 'position' } },
-    { title: '事件描述', dataIndex: 'description', key: 'description', scopedSlots: { customRender: 'description' } },
+    { title: '地点', dataIndex: 'event_location', key: 'event_location', scopedSlots: { customRender: 'event_location' } },
+    { title: '事件描述', dataIndex: 'event_desc', key: 'event_desc', scopedSlots: { customRender: 'event_desc' } },
+    { title: '老人ID', dataIndex: 'oldperson_id', key: 'oldperson_id', scopedSlots: { customRender: 'oldperson_id' } },
     { title: '操作', key: 'action', scopedSlots: { customRender: 'action' } },
 ];
 
 const rules = reactive({
-  type: [
+  event_type: [
     { required: true, message: '请输入事件类型' }
   ]
 });
 
-const filteredData = computed(() => {
-    if (!searchText.value) return data.value;
-    return data.value.filter(item => item.name.includes(searchText.value) || item.phone.includes(searchText.value));
+const currentForm = reactive({
+    id: '',
+    event_type: '',
+    event_date: null,
+    event_location: '',
+    event_desc: '',
+    oldperson_id: ''
 });
+
+const loadData = async () => {
+    await store.fetchAllData();
+    data.value = store.event;
+};
+
+onMounted(loadData);
 
 const showAddModal = () => { 
     isModalVisible.value = true; 
-    currentForm = {} 
+    Object.assign(currentForm, {
+        id: '',
+        event_type: '',
+        event_date: null,
+        event_location: '',
+        event_desc: '',
+        oldperson_id: ''
+    }); 
 };
 
-const showEditModal = (id) => { 
+const showUpdateModal = (id) => { 
+    isUpdating.value = true;
     isModalVisible.value = true;
+    updateId.value = id
 };
 
-const handleDelete = (record) => { 
-    data.value = data.value.filter(item => item.id !== record.id); 
-    message.success('删除成功'); 
+const handleDelete = async (id) => { 
+    data.value = data.value.filter(item => item.id !== id);
+    await store.deleteData(id);
+    message.success('删除成功');
+    loadData();
 };
 
-const handleSubmit = () => {
-    const index = data.value.findIndex(item => item.id === currentForm.id);
-    if (index === -1) {
-        data.value.push({ ...currentForm, id: Date.now() });
-        message.success('添加成功');
-    } else {
-        data.value[index] = currentForm;
-        message.success('更新成功');
+const handleSubmit = async () => {
+    if (isUpdating.value) {
+        const updatedEvent = { ...currentForm, id: updateId.value };
+        await store.updateData(updatedEvent);
+        message.success('修改成功!');
     }
+    else {
+        await store.addData(currentForm);
+        message.success('添加成功!');
+    }
+    loadData()
     isModalVisible.value = false;
 };
 
-const handleSearch = () => {
-  console.log('Searching for:', searchText.value);
+const handleSearch = async (name) => {
+  await store.searchData(name);
+  data.value = store.searchResults
 };
 
 const handleReset = () => {
   searchText.value = '';
+  loadData();
 };
 
 const resetForm = () => {
