@@ -186,31 +186,46 @@ const rules = reactive({
 axios.defaults.baseURL = 'http://localhost:9000'
 
 const loadData = async () => {
-    try {
-        const response = await axios.get("/oldpersons/findAll");
-        if (response && response.data && response.data.data) {
-            const elderlies = response.data.data;
-            // 打印获取的数据
-            console.log("response.data.data:", elderlies);
+    const url = 'http://localhost:9000/oldpersons/findAll'
+    const token = localStorage.getItem('token')
+    axios.get(url, {
+        headers: {
+            // 'Access-Control-Request-Method': 'GET',
+            // 'Access-Control-Request-Headers': 'Authorization, Content-Type', 
+            'Authorization': `Bearer ${token}`,
+            // 'Content-Type': 'application/json',
+        }   
+    }).then((response)=>{
+        cosnole.log(response);
+    })
+    .catch(err => {
+        message.error('注册失败', 2);
+    })
+    // try {
+    //     const response = await axios.get("/oldpersons/findAll");
+    //     if (response && response.data && response.data.data) {
+    //         const elderlies = response.data.data;
+    //         // 打印获取的数据
+    //         console.log("response.data.data:", elderlies);
 
-            // 更新 data 源
-            data1.value = elderlies.map(elder => ({
-                id: elder.id,
-                name: elder.name,
-                gender: elder.gender,
-                phone: elder.phone,
-                checkin_date: elder.checkin_date,
-                checkout_date: elder.checkout_date,
-                healthState: elder.health_state,
-                imgsetDir: elder.imgset_dir,
-                description: elder.description
-            }));
-        } else {
-            console.error('Unexpected response structure:', response);
-        }
-    } catch (error) {
-        console.error('Error fetching all data:', error);
-    }
+    //         // 更新 data 源
+    //         data1.value = elderlies.map(elder => ({
+    //             id: elder.id,
+    //             name: elder.name,
+    //             gender: elder.gender,
+    //             phone: elder.phone,
+    //             checkin_date: elder.checkin_date,
+    //             checkout_date: elder.checkout_date,
+    //             healthState: elder.health_state,
+    //             imgsetDir: elder.imgset_dir,
+    //             description: elder.description
+    //         }));
+    //     } else {
+    //         console.error('Unexpected response structure:', response);
+    //     }
+    // } catch (error) {
+    //     console.error('Error fetching all data:', error);
+    // }
 };
 
 onMounted(loadData);
