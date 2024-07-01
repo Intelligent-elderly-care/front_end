@@ -45,7 +45,7 @@
             <a-table :columns="columns" :data-source="data" row-key="id" :pagination="{ position: ['bottomCenter'], pageSize: 8 }" bordered>
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'imgSetDir'">
-                        <img :src="record.imgSetDir" :alt="record.name" width="30" height="30" />
+                        <img :src="record.imgSetDir" :alt="record.name" width="30" height="30" style="border-radius: 15px" />
                     </template>
                     <template v-if="column.key === 'action'">
                         <span>
@@ -168,7 +168,7 @@ const columns = [
     { title: '入院日期', dataIndex: 'checkin_date', key: 'checkin_date', scopedSlots: { customRender: 'checkin_date' } },
     { title: '出院日期', dataIndex: 'checkout_date', key: 'checkout_date', scopedSlots: { customRender: 'checkout_date' } },
     { title: '健康状况', dataIndex: 'health_state', key: 'health_state', scopedSlots: { customRender: 'healthState' } },
-    { title: '头像', dataIndex: 'imgSetDir', key: 'imgSetDir', scopedSlots: { customRender: 'imgsetDir' } },
+    { title: '头像', dataIndex: 'imgSetDir', key: 'imgSetDir', scopedSlots: { customRender: 'imgSetDir' } },
     { title: '描述', dataIndex: 'description', key: 'description', scopedSlots: { customRender: 'description' } },
     { title: '操作', key: 'action', scopedSlots: { customRender: 'action' }, width: '16%' },
 ];
@@ -227,6 +227,7 @@ const showUpdateModal = (id) => {
 const handleDelete = async (id) => { 
     data.value = data.value.filter(item => item.id !== id);
     await store.deleteData(id);
+    loadData()
     message.success('删除成功'); 
 };
 
@@ -240,7 +241,7 @@ const handleSubmit = async () => {
         await store.addData(currentForm);
         message.success('添加成功!');
     }
-    data.value = store.fetchAllData();  // 刷新数据
+    loadData();  // 刷新数据
     isModalVisible.value = false;
 };
 
@@ -251,6 +252,7 @@ const handleSearch = async (name) => {
 
 const handleReset = () => {
   searchText.value = '';
+  loadData();
 };
 
 const resetForm = () => {
