@@ -42,17 +42,19 @@
                 </div>
             </div>
 
-            <a-table :columns="columns" :data-source="data" row-key="id" :pagination="{ position: ['bottomCenter'], pageSize: 8,}" bordered>
-                <template #bodyCell="{ column, record }">
-                    <template v-if="column.key === 'action'">
-                        <span>
-                            <a @click="showUpdateModal(record.id)" class="text-blue-500 hover:text-blue-700">修改信息</a>
-                            <a-divider type="vertical" />
-                            <a @click="handleDelete(record.id)" class="text-red-500 hover:text-red-700">删除</a>
-                        </span>
+            <a-spin :spinning="loading" tip="Loading...">
+                <a-table :columns="columns" :data-source="data" row-key="id" :pagination="{ position: ['bottomCenter'], pageSize: 8,}" bordered>
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.key === 'action'">
+                            <span>
+                                <a @click="showUpdateModal(record.id)" class="text-blue-500 hover:text-blue-700">修改信息</a>
+                                <a-divider type="vertical" />
+                                <a @click="handleDelete(record.id)" class="text-red-500 hover:text-red-700">删除</a>
+                            </span>
+                        </template>
                     </template>
-                </template>
-            </a-table>
+                </a-table>
+            </a-spin>
         </div>
 
         <a-modal v-model:visible="isModalVisible" title="义工信息" @ok="handleSubmit" @cancel="isModalVisible = false">
@@ -92,7 +94,9 @@ const isModalVisible = ref(false);
 const data = ref([]);
 // 用于区分是新增信息还是修改信息
 const isUpdating = ref(false);
-const updateId = ref(0)
+const updateId = ref(0);
+
+const loading = ref(true);
 
 const columns = [
     { title: '编号', dataIndex: 'id', key: 'id', scopedSlots: { customRender: 'id' } },
@@ -120,8 +124,10 @@ const currentForm = reactive({
 });
 
 const loadData = async () => {
+    loading.value = true;
     await store.fetchAllData();
     data.value = store.event;
+    loading.value = false;
 };
 
 onMounted(loadData);
