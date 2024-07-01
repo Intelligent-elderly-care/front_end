@@ -6,12 +6,12 @@
                 <div class="flex items-center space-x-4">
                     <input
                     v-model="searchText"
-                    @keypress.enter="handleSearch"
+                    @keypress.enter="handleSearch(searchText)"
                     class="shadow appearance-none border rounded w-2/3 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     placeholder="输入老人信息..."
                     />
                     <button
-                    @click="handleSearch"
+                    @click="handleSearch(searchText)"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm"
                     >
                     查询搜索
@@ -128,7 +128,7 @@ import { message } from 'ant-design-vue';
 
 import { useElderlyStore } from '~/stores/elderly';
 
-const route = useRoute()
+const router = useRouter()
 const store = useElderlyStore();
 
 const searchText = ref('');
@@ -240,12 +240,13 @@ const handleSubmit = async () => {
         await store.addData(currentForm);
         message.success('添加成功!');
     }
-    store.fetchAllData();  // 刷新数据
+    data.value = store.fetchAllData();  // 刷新数据
     isModalVisible.value = false;
 };
 
-const handleSearch = () => {
-  console.log('Searching for:', searchText.value);
+const handleSearch = async (name) => {
+  await store.searchData(name);
+  data.value = store.searchResults
 };
 
 const handleReset = () => {
