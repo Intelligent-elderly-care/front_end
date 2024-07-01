@@ -20,9 +20,8 @@ export const useStaffStore = defineStore('staff', {
                   name: staff.name,
                   gender: staff.gender,
                   phone: staff.phone,
-                  checkin_date: staff.checkin_date,
-                  checkout_date: staff.checkout_date,
-                  health_state: staff.health_state,
+                  hire_date: staff.hire_date,
+                  resign_date: staff.resign_date,
                   imgSetDir: staff.imgset_dir,
                   description: staff.description
               }));

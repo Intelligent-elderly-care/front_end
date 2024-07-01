@@ -22,7 +22,6 @@ export const useVolunteerStore = defineStore('volunteer', {
                   phone: volunteer.phone,
                   checkin_date: volunteer.checkin_date,
                   checkout_date: volunteer.checkout_date,
-                  health_state: volunteer.health_state,
                   imgSetDir: volunteer.imgset_dir,
                   description: volunteer.description
               }));
@@ -81,7 +80,6 @@ export const useVolunteerStore = defineStore('volunteer', {
                   phone: result.phone,
                   checkin_date: result.checkin_date,
                   checkout_date: result.checkout_date,
-                  health_state: result.health_state,
                   imgSetDir: result.imgset_dir,
                   description: result.description
               }));
