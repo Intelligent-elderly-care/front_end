@@ -49,7 +49,7 @@
                     </template>
                     <template v-if="column.key === 'action'">
                         <span>
-                            <a @click="showEditModal(record.id)" class="text-blue-500 hover:text-blue-700">修改信息</a>
+                            <a @click="showUpdateModal(record.id)" class="text-blue-500 hover:text-blue-700">修改信息</a>
                             <a-divider type="vertical" />
                             <a @click="handleDelete(record.id)" class="text-red-500 hover:text-red-700">删除</a>
                         </span>
@@ -128,11 +128,14 @@ import { message } from 'ant-design-vue';
 
 import { useElderlyStore } from '~/stores/elderly';
 
+const route = useRoute()
 const store = useElderlyStore();
 
 const searchText = ref('');
 const isModalVisible = ref(false);
 const data = ref([]);
+// 用于区分是新增信息还是修改信息
+const isUpdating = ref(false);
 
 const currentForm = reactive({
     name: '',
@@ -199,7 +202,8 @@ const filteredData = computed(() => {
 });
 
 const showAddModal = () => { 
-    isModalVisible.value = true; 
+    isUpdating.value = false;
+    isModalVisible.value = true;
     Object.assign(currentForm, {
         name: '',
         gender: '',
@@ -213,9 +217,9 @@ const showAddModal = () => {
     }); 
 };
 
-const showEditModal = (id) => { 
+const showUpdateModal = (id) => { 
+    isUpdating.value = true;
     isModalVisible.value = true;
-    console.log(id) 
 };
 
 const handleDelete = async (id) => { 
@@ -225,20 +229,16 @@ const handleDelete = async (id) => {
 };
 
 const handleSubmit = async () => {
-    // const formattedForm = {
-    //     ...currentForm.value,
-    //     checkin_date: formatDate(currentForm.value.checkin_date),
-    //     checkout_date: formatDate(currentForm.value.checkout_date),
-    //     birthday: formatDate(currentForm.value.birthday)
-    // };
-    try {
-        await store.addData(currentForm);
-        message.success('添加成功');
-        store.fetchAllData();  // 刷新数据
-        isModalVisible.value = false;
-    } catch (error) {
-        message.error('添加失败');
+    if (isUpdating.value) {
+        await store.updateData(currentForm);
+        message.success('修改成功!');
     }
+    else {
+        await store.addData(currentForm);
+        message.success('添加成功!');
+    }
+    store.fetchAllData();  // 刷新数据
+    isModalVisible.value = false;
 };
 
 const handleSearch = () => {
