@@ -42,16 +42,16 @@
                 </div>
             </div>
 
-            <a-table :columns="columns" :data-source="data" row-key="id" :pagination="{ position: ['bottomCenter'],pageSize: 8 }" bordered>
+            <a-table :columns="columns" :data-source="data" row-key="id" :pagination="{ position: ['bottomCenter'], pageSize: 8 }" bordered>
                 <template #bodyCell="{ column, record }">
-                    <template v-if="column.key === 'imgsetDir'">
-                        <Icon :name="record.imgsetDir" size="30" />
+                    <template v-if="column.key === 'imgSetDir'">
+                        <img :src="record.imgSetDir" :alt="record.name" width="30" height="30" />
                     </template>
                     <template v-if="column.key === 'action'">
                         <span>
-                            <a @click="showEditModal(record.id)" class="text-blue-500 hover:text-blue-700">修改信息</a>
+                            <a @click="showUpdateModal(record.id)" class="text-blue-500 hover:text-blue-700">修改信息</a>
                             <a-divider type="vertical" />
-                            <a @click="handleDelete(record)" class="text-red-500 hover:text-red-700">删除</a>
+                            <a @click="handleDelete(record.id)" class="text-red-500 hover:text-red-700">删除</a>
                         </span>
                     </template>
                 </template>
@@ -81,38 +81,38 @@
                 <a-form-item label="生日" name="birthday">
                     <a-date-picker v-model:value="currentForm.birthday" show-time format="YYYY-MM-DD HH:mm:ss" />
                 </a-form-item>
-                <a-form-item label="头像" name="imgsetDir">
-                    <a-input v-model:value="currentForm.imgsetDir" />
+                <a-form-item label="头像" name="imgset_dir">
+                    <a-input v-model:value="currentForm.imgset_dir" />
                 </a-form-item>
-                <a-form-item label="房间号" name="roomNumber">
-                    <a-input v-model:value="currentForm.roomNumber" />
+                <a-form-item label="房间号" name="room_number">
+                    <a-input v-model:value="currentForm.room_number" />
                 </a-form-item>
-                <a-form-item label="第一监护人名字" name="firstGuardianName">
-                    <a-input v-model:value="currentForm.firstGuardianName" />
+                <a-form-item label="第一监护人名字" name="firstguardian_name">
+                    <a-input v-model:value="currentForm.firstguardian_name" />
                 </a-form-item>
-                <a-form-item label="与第一监护人关系" name="firstGuardianRelationship">
-                    <a-input v-model:value="currentForm.firstGuardianRelationship" />
+                <a-form-item label="与第一监护人关系" name="firstguardian_relationship">
+                    <a-input v-model:value="currentForm.firstguardian_relationship" />
                 </a-form-item>
-                <a-form-item label="第一监护人电话" name="firstGuardianPhone">
-                    <a-input v-model:value="currentForm.firstGuardianPhone" />
+                <a-form-item label="第一监护人电话" name="firstguardian_phone">
+                    <a-input v-model:value="currentForm.firstguardian_phone" />
                 </a-form-item>
-                <a-form-item label="第一监护人微信" name="firstGuardianWechat">
-                    <a-input v-model:value="currentForm.firstGuardianWechat" />
+                <a-form-item label="第一监护人微信" name="firstguardian_wechat">
+                    <a-input v-model:value="currentForm.firstguardian_wechat" />
                 </a-form-item>
-                <a-form-item label="第二监护人名字" name="secondGuardianName">
-                    <a-input v-model:value="currentForm.secondGuardianName" />
+                <a-form-item label="第二监护人名字" name="secondguardian_name">
+                    <a-input v-model:value="currentForm.secondguardian_name" />
                 </a-form-item>
-                <a-form-item label="与第二监护人关系" name="secondGuardianRelationship">
-                    <a-input v-model:value="currentForm.secondGuardianRelationship" />
+                <a-form-item label="与第二监护人关系" name="secondguardian_relationship">
+                    <a-input v-model:value="currentForm.secondguardian_relationship" />
                 </a-form-item>
-                <a-form-item label="第二监护人电话" name="secondGuardianPhone">
-                    <a-input v-model:value="currentForm.secondGuardianPhone" />
+                <a-form-item label="第二监护人电话" name="secondguardian_phone">
+                    <a-input v-model:value="currentForm.secondguardian_phone" />
                 </a-form-item>
-                <a-form-item label="第二监护人微信" name="secondGuardianWechat">
-                    <a-input v-model:value="currentForm.secondGuardianWechat" />
+                <a-form-item label="第二监护人微信" name="secondguardian_wechat">
+                    <a-input v-model:value="currentForm.secondguardian_wechat" />
                 </a-form-item>
-                <a-form-item label="健康状况" name="healthState">
-                    <a-input v-model:value="currentForm.healthState" />
+                <a-form-item label="健康状况" name="health_state">
+                    <a-input v-model:value="currentForm.health_state" />
                 </a-form-item>
                 <a-form-item label="描述" name="description">
                     <a-input v-model:value="currentForm.description" />
@@ -125,33 +125,39 @@
 <script setup>
 import { ref, reactive, computed } from 'vue';
 import { message } from 'ant-design-vue';
-import axios from 'axios';
 
-// import { useElderlyStore } from '~/stores/elderly';
+import { useElderlyStore } from '~/stores/elderly';
 
-// const store = useElderlyStore();
+const route = useRoute()
+const store = useElderlyStore();
 
 const searchText = ref('');
 const isModalVisible = ref(false);
-let currentForm = reactive({});
-const data1 = ref([]);
+const data = ref([]);
+// 用于区分是新增信息还是修改信息
+const isUpdating = ref(false);
 
-const data = ref([
-    { id: 1, name:'骐哥', gender: '男', phone: '12345678901', checkin_date: '2023-01-01', checkout_date: '2023-06-01', healthState: '健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 2, name:'骐狗', gender: '女', phone: '12345678902', checkin_date: '2023-02-01', checkout_date: '2023-06-02', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 3, name:'骐狗', gender: '女', phone: '12345678902', checkin_date: '2023-02-01', checkout_date: '2023-06-02', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 4, name:'骐狗', gender: '女', phone: '12345678902', checkin_date: '2023-02-01', checkout_date: '2023-06-02', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 5, name:'骐狗', gender: '女', phone: '12345678902', checkin_date: '2023-02-01', checkout_date: '2023-06-02', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 6, name:'骐狗', gender: '女', phone: '12345678902', checkin_date: '2023-02-01', checkout_date: '2023-06-02', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 7, name:'骐狗', gender: '女', phone: '12345678902', checkin_date: '2023-02-01', checkout_date: '2023-06-02', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 8, name:'骐狗', gender: '女', phone: '12345678902', checkin_date: '2023-02-01', checkout_date: '2023-06-02', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 9, name:'骐狗', gender: '女', phone: '12345678902', checkin_date: '2023-02-01', checkout_date: '2023-06-02', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 10, name:'骐狗', gender: '女', phone: '12345678902', checkin_date: '2023-02-01', checkout_date: '2023-06-02', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 11, name:'骐狗', gender: '女', phone: '12345678902', checkin_date: '2023-02-01', checkout_date: '2023-06-02', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 12, name:'骐狗', gender: '女', phone: '12345678902', checkin_date: '2023-02-01', checkout_date: '2023-06-02', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 13, name:'骐狗', gender: '女', phone: '12345678902', checkin_date: '2023-02-01', checkout_date: '2023-06-02', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-    { id: 14, name:'骐狗', gender: '女', phone: '12345678902', checkin_date: '2023-02-01', checkout_date: '2023-06-02', healthState: '亚健康', imgsetDir: 'https://picsum.photos/id/83/300/320', description: '无' },
-]);
+const currentForm = reactive({
+    name: '',
+    gender: '',
+    phone: '',
+    id_card: '',
+    checkin_date: null,
+    checkout_date: null,
+    birthday: null,
+    imgset_dir: '',
+    room_number: '',
+    firstguardian_name: '',
+    firstguardian_relationship: '',
+    firstguardian_phone: '',
+    firstguardian_wechat: '',
+    secondguardian_name: '',
+    secondguardian_relationship: '',
+    secondguardian_phone: '',
+    secondguardian_wechat: '',
+    health_state: '',
+    description: ''
+});
 
 const columns = [
     { title: '编号', dataIndex: 'id', key: 'id', scopedSlots: { customRender: 'id' } },
@@ -160,8 +166,8 @@ const columns = [
     { title: '手机号', dataIndex: 'phone', key: 'phone', scopedSlots: { customRender: 'phone' } },
     { title: '入院日期', dataIndex: 'checkin_date', key: 'checkin_date', scopedSlots: { customRender: 'checkin_date' } },
     { title: '出院日期', dataIndex: 'checkout_date', key: 'checkout_date', scopedSlots: { customRender: 'checkout_date' } },
-    { title: '健康状况', dataIndex: 'healthState', key: 'healthState', scopedSlots: { customRender: 'healthState' } },
-    { title: '头像', dataIndex: 'imgsetDir', key: 'imgsetDir', scopedSlots: { customRender: 'imgsetDir' } },
+    { title: '健康状况', dataIndex: 'health_state', key: 'health_state', scopedSlots: { customRender: 'healthState' } },
+    { title: '头像', dataIndex: 'imgSetDir', key: 'imgSetDir', scopedSlots: { customRender: 'imgsetDir' } },
     { title: '描述', dataIndex: 'description', key: 'description', scopedSlots: { customRender: 'description' } },
     { title: '操作', key: 'action', scopedSlots: { customRender: 'action' }, width: '16%' },
 ];
@@ -183,49 +189,9 @@ const rules = reactive({
   ]
 });
 
-axios.defaults.baseURL = 'http://localhost:9000'
-
 const loadData = async () => {
-    const url = 'http://localhost:9000/oldpersons/findAll'
-    const token = localStorage.getItem('token')
-    axios.get(url, {
-        headers: {
-            // 'Access-Control-Request-Method': 'GET',
-            // 'Access-Control-Request-Headers': 'Authorization, Content-Type', 
-            'Authorization': `Bearer ${token}`,
-            // 'Content-Type': 'application/json',
-        }   
-    }).then((response)=>{
-        cosnole.log(response);
-    })
-    .catch(err => {
-        message.error('注册失败', 2);
-    })
-    // try {
-    //     const response = await axios.get("/oldpersons/findAll");
-    //     if (response && response.data && response.data.data) {
-    //         const elderlies = response.data.data;
-    //         // 打印获取的数据
-    //         console.log("response.data.data:", elderlies);
-
-    //         // 更新 data 源
-    //         data1.value = elderlies.map(elder => ({
-    //             id: elder.id,
-    //             name: elder.name,
-    //             gender: elder.gender,
-    //             phone: elder.phone,
-    //             checkin_date: elder.checkin_date,
-    //             checkout_date: elder.checkout_date,
-    //             healthState: elder.health_state,
-    //             imgsetDir: elder.imgset_dir,
-    //             description: elder.description
-    //         }));
-    //     } else {
-    //         console.error('Unexpected response structure:', response);
-    //     }
-    // } catch (error) {
-    //     console.error('Error fetching all data:', error);
-    // }
+    await store.fetchAllData();
+    data.value = store.elderly;
 };
 
 onMounted(loadData);
@@ -236,7 +202,8 @@ const filteredData = computed(() => {
 });
 
 const showAddModal = () => { 
-    isModalVisible.value = true; 
+    isUpdating.value = false;
+    isModalVisible.value = true;
     Object.assign(currentForm, {
         name: '',
         gender: '',
@@ -250,25 +217,27 @@ const showAddModal = () => {
     }); 
 };
 
-const showEditModal = (id) => { 
+const showUpdateModal = (id) => { 
+    isUpdating.value = true;
     isModalVisible.value = true;
-    console.log(id) 
 };
 
-const handleDelete = (record) => { 
-    data.value = data.value.filter(item => item.id !== record.id); 
+const handleDelete = async (id) => { 
+    data.value = data.value.filter(item => item.id !== id);
+    await store.deleteData(id);
     message.success('删除成功'); 
 };
 
-const handleSubmit = () => {
-    const index = data.value.findIndex(item => item.id === currentForm.id);
-    if (index === -1) {
-        data.value.push({ ...currentForm, id: Date.now() });
-        message.success('添加成功');
-    } else {
-        data.value[index] = currentForm;
-        message.success('更新成功');
+const handleSubmit = async () => {
+    if (isUpdating.value) {
+        await store.updateData(currentForm);
+        message.success('修改成功!');
     }
+    else {
+        await store.addData(currentForm);
+        message.success('添加成功!');
+    }
+    store.fetchAllData();  // 刷新数据
     isModalVisible.value = false;
 };
 

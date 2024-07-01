@@ -60,10 +60,35 @@
                             </ul>
                         </li>
                         <li class="rounded-sm">
-                            <button @click="setPage('camera')" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer w-full">
-                                <Icon name="mage:camera" class="text-gray-100" size="30"/>
-                                <span class="text-gray-100">摄像头管理</span>
+                            <button @click="toggleManageMenu = !toggleManageMenu" class="flex items-center justify-between w-full p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer">
+                                <div class="flex items-center space-x-3">
+                                    <Icon name="mage:camera" class="text-gray-100" size="30"/>
+                                    <span class="text-gray-100">实时视频检测</span>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-100 transform transition-transform" :class="{ 'rotate-180': toggleManageMenu }">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                                </svg>
                             </button>
+                            <ul v-show="toggleManageMenu" class="pl-4 pt-2 pb-1 text-sm">
+                                <li>
+                                    <button @click="setPage('face')" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-3 block w-full text-left rounded-md">
+                                        <Icon name="material-symbols:elderly" class="text-gray-100 mr-2" size="35"/>
+                                        人脸识别
+                                    </button>
+                                </li>
+                                <li>
+                                    <button @click="setPage('emotion')" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-4 block w-full text-left rounded-md">
+                                        <Icon name="guidance:care-staff-area" class="text-gray-100 mr-2" size="30"/>
+                                        情绪识别
+                                    </button>
+                                </li>
+                                <li>
+                                    <button @click="setPage('fallOver')" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-4 block w-full text-left rounded-md">
+                                        <Icon name="material-symbols:volunteer-activism" class="text-gray-100 mr-2" size="30"/>
+                                        摔倒检测
+                                    </button>
+                                </li>
+                            </ul>
                         </li>
                         <li class="rounded-sm">
                             <button @click="setPage('settings')" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer w-full">

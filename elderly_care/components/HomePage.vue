@@ -5,7 +5,9 @@
             <StaffManagement v-if="currentPage === 'staff'" />
             <VolunteerManagement v-if="currentPage === 'volunteer'" />
             <Event v-if="currentPage === 'event'" />
-            <Camera v-if="currentPage === 'camera'" />
+            <Emotion v-if="currentPage === 'emotion'" />
+            <Face v-if="currentPage === 'face'" />
+            <FallOver v-if="currentPage === 'fallOver'" />
             <Settings v-if="currentPage === 'settings'" />
         </div>
     </div>
@@ -13,15 +15,9 @@
 
 <script setup>
 import { computed } from 'vue';
-import ElderlyManagement from '~/components/ElderlyManagement.vue';
-import StaffManagement from '~/components/StaffManagement.vue';
-import VolunteerManagement from '~/components/VolunteerManagement.vue';
 import { usePageStore } from '~/stores/page';
 
 const store = usePageStore();
 const currentPage = computed(() => store.currentPage);
 
-// const { $pageStore } = useNuxtApp()
-
-// const currentPage = $pageStore.currentPage;
 </script>
