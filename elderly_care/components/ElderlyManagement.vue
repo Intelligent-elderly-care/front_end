@@ -6,12 +6,12 @@
                 <div class="flex items-center space-x-4">
                     <input
                     v-model="searchText"
-                    @keypress.enter="handleSearch"
+                    @keypress.enter="handleSearch(searchText)"
                     class="shadow appearance-none border rounded w-2/3 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     placeholder="输入老人信息..."
                     />
                     <button
-                    @click="handleSearch"
+                    @click="handleSearch(searchText)"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm"
                     >
                     查询搜索
@@ -42,20 +42,22 @@
                 </div>
             </div>
 
-            <a-table :columns="columns" :data-source="data" row-key="id" :pagination="{ position: ['bottomCenter'], pageSize: 8 }" bordered>
-                <template #bodyCell="{ column, record }">
-                    <template v-if="column.key === 'imgSetDir'">
-                        <img :src="record.imgSetDir" :alt="record.name" width="30" height="30" />
+            <a-spin :spinning="loading" tip="Loading...">
+                <a-table :columns="columns" :data-source="data" row-key="id" :pagination="{ position: ['bottomCenter'], pageSize: 8}" bordered>
+                    <template #bodyCell="{ column, record }">
+                        <template v-if="column.key === 'imgSetDir'">
+                            <img :src="record.imgSetDir" :alt="record.name" width="30" height="30" style="border-radius: 15px" />
+                        </template>
+                        <template v-if="column.key === 'action'">
+                            <span>
+                                <a @click="showUpdateModal(record.id)" class="text-blue-500 hover:text-blue-700">修改信息</a>
+                                <a-divider type="vertical" />
+                                <a @click="handleDelete(record.id)" class="text-red-500 hover:text-red-700">删除</a>
+                            </span>
+                        </template>
                     </template>
-                    <template v-if="column.key === 'action'">
-                        <span>
-                            <a @click="showUpdateModal(record.id)" class="text-blue-500 hover:text-blue-700">修改信息</a>
-                            <a-divider type="vertical" />
-                            <a @click="handleDelete(record.id)" class="text-red-500 hover:text-red-700">删除</a>
-                        </span>
-                    </template>
-                </template>
-            </a-table>
+                </a-table>
+            </a-spin>
         </div>
 
         <a-modal v-model:visible="isModalVisible" title="老人信息" @ok="handleSubmit" @cancel="isModalVisible = false">
@@ -123,12 +125,12 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue';
-import { message } from 'ant-design-vue';
+import { ref, reactive } from 'vue';
+import { message, Spin } from 'ant-design-vue';
 
 import { useElderlyStore } from '~/stores/elderly';
 
-const route = useRoute()
+const router = useRouter()
 const store = useElderlyStore();
 
 const searchText = ref('');
@@ -136,6 +138,9 @@ const isModalVisible = ref(false);
 const data = ref([]);
 // 用于区分是新增信息还是修改信息
 const isUpdating = ref(false);
+const updateId = ref(0);
+
+const loading = ref(true);
 
 const currentForm = reactive({
     name: '',
@@ -167,7 +172,7 @@ const columns = [
     { title: '入院日期', dataIndex: 'checkin_date', key: 'checkin_date', scopedSlots: { customRender: 'checkin_date' } },
     { title: '出院日期', dataIndex: 'checkout_date', key: 'checkout_date', scopedSlots: { customRender: 'checkout_date' } },
     { title: '健康状况', dataIndex: 'health_state', key: 'health_state', scopedSlots: { customRender: 'healthState' } },
-    { title: '头像', dataIndex: 'imgSetDir', key: 'imgSetDir', scopedSlots: { customRender: 'imgsetDir' } },
+    { title: '头像', dataIndex: 'imgSetDir', key: 'imgSetDir', scopedSlots: { customRender: 'imgSetDir' } },
     { title: '描述', dataIndex: 'description', key: 'description', scopedSlots: { customRender: 'description' } },
     { title: '操作', key: 'action', scopedSlots: { customRender: 'action' }, width: '16%' },
 ];
@@ -190,16 +195,13 @@ const rules = reactive({
 });
 
 const loadData = async () => {
+    loading.value = true;
     await store.fetchAllData();
     data.value = store.elderly;
+    loading.value = false;
 };
 
 onMounted(loadData);
-
-const filteredData = computed(() => {
-    if (!searchText.value) return data.value;
-    return data.value.filter(item => item.name.includes(searchText.value) || item.phone.includes(searchText.value));
-});
 
 const showAddModal = () => { 
     isUpdating.value = false;
@@ -220,33 +222,38 @@ const showAddModal = () => {
 const showUpdateModal = (id) => { 
     isUpdating.value = true;
     isModalVisible.value = true;
+    updateId.value = id
 };
 
 const handleDelete = async (id) => { 
     data.value = data.value.filter(item => item.id !== id);
     await store.deleteData(id);
+    loadData()
     message.success('删除成功'); 
 };
 
 const handleSubmit = async () => {
     if (isUpdating.value) {
-        await store.updateData(currentForm);
+        const updatedElderly = { ...currentForm, id: updateId.value };
+        await store.updateData(updatedElderly);
         message.success('修改成功!');
     }
     else {
         await store.addData(currentForm);
         message.success('添加成功!');
     }
-    store.fetchAllData();  // 刷新数据
+    loadData();  // 刷新数据
     isModalVisible.value = false;
 };
 
-const handleSearch = () => {
-  console.log('Searching for:', searchText.value);
+const handleSearch = async (name) => {
+  await store.searchData(name);
+  data.value = store.searchResults
 };
 
 const handleReset = () => {
   searchText.value = '';
+  loadData();
 };
 
 const resetForm = () => {

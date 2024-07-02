@@ -3,28 +3,27 @@ import axios from '../plugins/axios'
 
 const $axios = axios().provide.axios
 
-export const useElderlyStore = defineStore('elderly', {
+export const useVolunteerStore = defineStore('volunteer', {
   state: () => ({
-    elderly: [],
+    volunteer: [],
     searchResults: []
   }),
   actions: {
-    // 查询所有老人信息
+    // 查询所有义工信息
     async fetchAllData() {
       try {
-          const response = await $axios.get("/oldpersons/findAll");
+          const response = await $axios.get("/volunteers/findAll");
           if (response && response.data && response.data.data) {
-              const elderlies = response.data.data
-              this.$state.elderly = elderlies.map(elder => ({
-                  id: elder.id,
-                  name: elder.name,
-                  gender: elder.gender,
-                  phone: elder.phone,
-                  checkin_date: elder.checkin_date,
-                  checkout_date: elder.checkout_date,
-                  health_state: elder.health_state,
-                  imgSetDir: elder.imgset_dir,
-                  description: elder.description
+              const volunteers = response.data.data
+              this.$state.volunteer = volunteers.map(volunteer => ({
+                  id: volunteer.id,
+                  name: volunteer.name,
+                  gender: volunteer.gender,
+                  phone: volunteer.phone,
+                  checkin_date: volunteer.checkin_date,
+                  checkout_date: volunteer.checkout_date,
+                  imgSetDir: volunteer.imgset_dir,
+                  description: volunteer.description
               }));
         } else {
           console.error('Unexpected response structure:', response);
@@ -34,10 +33,10 @@ export const useElderlyStore = defineStore('elderly', {
       }
     },
 
-    // 添加老人信息
-    async addData(newElderly) {
+    // 添加义工信息
+    async addData(newVolunteer) {
       try {
-        const response = await $axios.put('/oldpersons/add', newElderly, {
+        const response = await $axios.put('/volunteers/add', newVolunteer, {
           headers: {
               'Content-Type': 'application/json'
           }
@@ -49,11 +48,10 @@ export const useElderlyStore = defineStore('elderly', {
       }
     },
 
-    // 修改老人信息
-    async updateData(updatedElderly) {
+    // 修改义工信息
+    async updateData(updatedVolunteer) {
       try {
-        console.log(updatedElderly)
-        const response = await $axios.post('/oldpersons/update', updatedElderly, {
+        const response = await $axios.post('/volunteers/update', updatedVolunteer, {
           headers: {
               'Content-Type': 'application/json'
           }
@@ -65,10 +63,10 @@ export const useElderlyStore = defineStore('elderly', {
       }
     },
 
-    // 查询老人信息
+    // 查询义工信息
     async searchData(name) {
       try {
-          const response = await $axios.get('/oldpersons/findByName', {
+          const response = await $axios.get('/volunteers/findByName', {
             params: {
               name: name
             }
@@ -82,7 +80,6 @@ export const useElderlyStore = defineStore('elderly', {
                   phone: result.phone,
                   checkin_date: result.checkin_date,
                   checkout_date: result.checkout_date,
-                  health_state: result.health_state,
                   imgSetDir: result.imgset_dir,
                   description: result.description
               }));
@@ -94,9 +91,9 @@ export const useElderlyStore = defineStore('elderly', {
       }
     },
 
-    // 删除老人信息
+    // 删除义工信息
     async deleteData(id) {
-      await $axios.delete(`/oldpersons/delete/${id}`);
+      await $axios.delete(`/volunteers/delete/${id}`);
     }
   },
 

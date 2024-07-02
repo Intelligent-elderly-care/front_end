@@ -5,7 +5,8 @@ const $axios = axios().provide.axios
 
 export const useGeneralStore = defineStore('general', {
   state: () => ({
-    selectedPost: null,
+    id: '',
+    name: '',
     isBackUrl: "/",
   }),
   actions: {
@@ -25,26 +26,23 @@ export const useGeneralStore = defineStore('general', {
         this.isBackUrl = url
     },
 
-    async hasSessionExpired() {
-        await $axios.interceptors.response.use((response) => {
-            return response;
-        }, (error) => {
-            // TODO:确认错误码
-            switch (error.response.status) {
-                case 401:
-                case 419:
-                case 503:
-                    useUserStore().resetUser()
-                    window.location.href = '/';
-                    break;
-                case 500:
-                    alert('Oops, something went wrong!  The team has been notified.');
-                    break;
-                default:
-                    return Promise.reject(error);
-            }
-          });
-        },
+    // 获取当前用户ID
+    setUserId(id) {
+      this.id = id;
     },
-    persist: true,
+
+    // 获取当前用户名
+    setUserName(name) {
+      this.name = name;
+    },
+
+    // 用户注销用户
+    logout() {
+      this.name = '';
+      this.id = '';
+      localStorage.removeItem('token')
+      delete $axios.defaults.headers.common['Authorization']
+    } 
+  },
+  persist: true,
 })

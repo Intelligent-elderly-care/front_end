@@ -33,6 +33,8 @@
 <script>
 import axios from 'axios';
 import { message } from 'ant-design-vue';
+import { useGeneralStore } from '~/stores/general';
+
 export default {
     name: 'Login',
     data() {
@@ -60,6 +62,8 @@ export default {
             axios.post(url, json_data).then((response)=>{
               if(response.data.code == 0){
                 message.success('登录成功', 2);
+                const store = useGeneralStore();
+                store.setUserName(this.username);
                 const token = response.data.data;
                 localStorage.setItem("token",token);
                 axios.defaults.headers.common['Authorization'] = `${token}`

@@ -3,28 +3,25 @@ import axios from '../plugins/axios'
 
 const $axios = axios().provide.axios
 
-export const useElderlyStore = defineStore('elderly', {
+export const useEventStore = defineStore('event', {
   state: () => ({
-    elderly: [],
+    event: [],
     searchResults: []
   }),
   actions: {
     // 查询所有老人信息
     async fetchAllData() {
       try {
-          const response = await $axios.get("/oldpersons/findAll");
+          const response = await $axios.get("/events/findAll");
           if (response && response.data && response.data.data) {
-              const elderlies = response.data.data
-              this.$state.elderly = elderlies.map(elder => ({
-                  id: elder.id,
-                  name: elder.name,
-                  gender: elder.gender,
-                  phone: elder.phone,
-                  checkin_date: elder.checkin_date,
-                  checkout_date: elder.checkout_date,
-                  health_state: elder.health_state,
-                  imgSetDir: elder.imgset_dir,
-                  description: elder.description
+              const events = response.data.data
+              this.$state.event = events.map(event => ({
+                  id: event.id,
+                  event_type: event.event_type,
+                  event_date: event.event_date,
+                  event_location: event.event_location,
+                  event_desc: event.event_desc,
+                  oldperson_id: event.oldperson_id
               }));
         } else {
           console.error('Unexpected response structure:', response);
@@ -35,9 +32,9 @@ export const useElderlyStore = defineStore('elderly', {
     },
 
     // 添加老人信息
-    async addData(newElderly) {
+    async addData(newEvent) {
       try {
-        const response = await $axios.put('/oldpersons/add', newElderly, {
+        const response = await $axios.put('/events/add', newEvent, {
           headers: {
               'Content-Type': 'application/json'
           }
@@ -50,10 +47,10 @@ export const useElderlyStore = defineStore('elderly', {
     },
 
     // 修改老人信息
-    async updateData(updatedElderly) {
+    async updateData(updatedEvent) {
       try {
-        console.log(updatedElderly)
-        const response = await $axios.post('/oldpersons/update', updatedElderly, {
+        console.log(updatedEvent)
+        const response = await $axios.post('/events/update', updatedEvent, {
           headers: {
               'Content-Type': 'application/json'
           }
@@ -66,25 +63,18 @@ export const useElderlyStore = defineStore('elderly', {
     },
 
     // 查询老人信息
-    async searchData(name) {
+    async searchData(type) {
       try {
-          const response = await $axios.get('/oldpersons/findByName', {
-            params: {
-              name: name
-            }
-          });
+          const response = await $axios.get(`/events/findByType/${type}`);
           if (response && response.data && response.data.data) {
               const results = response.data.data
               this.$state.searchResults = results.map(result => ({
-                  id: result.id,
-                  name: result.name,
-                  gender: result.gender,
-                  phone: result.phone,
-                  checkin_date: result.checkin_date,
-                  checkout_date: result.checkout_date,
-                  health_state: result.health_state,
-                  imgSetDir: result.imgset_dir,
-                  description: result.description
+                id: result.id,
+                event_type: result.event_type,
+                event_date: result.event_date,
+                event_location: result.event_location,
+                event_desc: result.event_desc,
+                oldperson_id: result.oldperson_id
               }));
         } else {
           console.error('Unexpected response structure:', response);
@@ -96,7 +86,7 @@ export const useElderlyStore = defineStore('elderly', {
 
     // 删除老人信息
     async deleteData(id) {
-      await $axios.delete(`/oldpersons/delete/${id}`);
+      await $axios.delete(`/events/delete/${id}`);
     }
   },
 
