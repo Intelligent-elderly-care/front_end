@@ -24,25 +24,25 @@
                             </button>
                             <ul v-show="toggleManageMenu" class="pl-4 pt-2 pb-1 text-sm">
                                 <li>
-                                    <button @click="setPage('elderly'); closeAllMenus()" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-3 block w-full text-left rounded-md">
+                                    <button @click="setPage('elderly')" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-3 block w-full text-left rounded-md">
                                         <Icon name="material-symbols:elderly" class="text-gray-100 mr-2" size="35"/>
                                         老人信息管理
                                     </button>
                                 </li>
                                 <li>
-                                    <button @click="setPage('staff'); closeAllMenus()" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-4 block w-full text-left rounded-md">
+                                    <button @click="setPage('staff')" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-4 block w-full text-left rounded-md">
                                         <Icon name="guidance:care-staff-area" class="text-gray-100 mr-2" size="30"/>
                                         工作人员信息管理
                                     </button>
                                 </li>
                                 <li>
-                                    <button @click="setPage('volunteer'); closeAllMenus()" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-4 block w-full text-left rounded-md">
+                                    <button @click="setPage('volunteer')" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-4 block w-full text-left rounded-md">
                                         <Icon name="material-symbols:volunteer-activism" class="text-gray-100 mr-2" size="30"/>
                                         义工信息管理
                                     </button>
                                 </li>
                                 <li>
-                                    <button @click="setPage('event'); closeAllMenus()" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-4 block w-full text-left rounded-md">
+                                    <button @click="setPage('event')" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-4 block w-full text-left rounded-md">
                                         <Icon name="material-symbols:volunteer-activism" class="text-gray-100 mr-2" size="30"/>
                                         事件管理
                                     </button>
@@ -61,19 +61,19 @@
                             </button>
                             <ul v-show="toggleCameraMenu" class="pl-4 pt-2 pb-1 text-sm">
                                 <li>
-                                    <button @click="setPage('face'); closeAllMenus()" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-3 block w-full text-left rounded-md">
+                                    <button @click="setPage('face')" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-3 block w-full text-left rounded-md">
                                         <Icon name="icon-park-outline:ios-face-recognition" class="text-gray-100 mr-2" size="35"/>
                                         人脸识别
                                     </button>
                                 </li>
                                 <li>
-                                    <button @click="setPage('emotion'); closeAllMenus()" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-4 block w-full text-left rounded-md">
+                                    <button @click="setPage('emotion')" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-4 block w-full text-left rounded-md">
                                         <Icon name="ic:round-emoji-emotions" class="text-gray-100 mr-2" size="30"/>
                                         情绪识别
                                     </button>
                                 </li>
                                 <li>
-                                    <button @click="setPage('fallOver'); closeAllMenus()" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-4 block w-full text-left rounded-md">
+                                    <button @click="setPage('fallOver')" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-4 block w-full text-left rounded-md">
                                         <Icon name="fa6-solid:user-injured" class="text-gray-100 mr-2" size="30"/>
                                         摔倒检测
                                     </button>
@@ -81,25 +81,25 @@
                             </ul>
                         </li>
                         <li class="rounded-sm">
-                            <button @click="setPage('chatBot'); closeAllMenus()" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer w-full">
+                            <button @click="setPage('chatBot')" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer w-full">
                                 <Icon name="tabler:message-chatbot" class="text-gray-100" size="30"/>
                                 <span class="text-gray-100">聊天机器人</span>
                             </button>
                         </li>
                         <li class="rounded-sm">
-                            <button @click="setPage('dataStatistics'); closeAllMenus()" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer w-full">
+                            <button @click="setPage('dataStatistics')" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer w-full">
                                 <Icon name="material-symbols-light:data-thresholding-outline-sharp" class="text-gray-100" size="30"/>
                                 <span class="text-gray-100">数据统计</span>
                             </button>
                         </li>
                         <li class="rounded-sm">
-                            <button @click="setPage('knowledgeGraph'); closeAllMenus()" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer w-full">
+                            <button @click="setPage('knowledgeGraph')" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer w-full">
                                 <Icon name="mage:settings" class="text-gray-100" size="30"/>
                                 <span class="text-gray-100">知识图谱</span>
                             </button>
                         </li>
                         <li class="rounded-sm">
-                            <button @click="setPage('settings'); closeAllMenus()" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer w-full">
+                            <button @click="setPage('settings')" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer w-full">
                                 <Icon name="mage:settings" class="text-gray-100" size="30"/>
                                 <span class="text-gray-100">系统设置</span>
                             </button>
@@ -124,8 +124,8 @@ const setPage = (page) => {
     store.setPage(page);
 };
 
-const closeAllMenus = () => {
-    toggleManageMenu.value = false;
-    toggleCameraMenu.value = false;
-};
+// const closeAllMenus = () => {
+//     toggleManageMenu.value = false;
+//     toggleCameraMenu.value = false;
+// };
 </script>

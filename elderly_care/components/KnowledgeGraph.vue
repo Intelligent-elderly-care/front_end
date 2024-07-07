@@ -1,71 +1,137 @@
 <template>
-  <div>
-    <div id="chart" style="width: 100%; height: 600px;"></div>
+  <div style="display: flex; flex-direction: column; height: 100vh;">
+    <div style="padding: 10px;">
+      <input v-model="keyword" placeholder="输入关键词搜索" />
+      <button @click="search">搜索</button>
+    </div>
+    <div id="chart" style="flex-grow: 1;"></div>
   </div>
 </template>
 
 <script>
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import * as echarts from 'echarts';
-import axios from '../plugins/axios'
-
-const $axios = axios().provide.axios
+import axios from 'axios';
 
 export default {
   setup() {
+    const keyword = ref('');
+    const myChart = ref(null);
+
     onMounted(async () => {
       const chartDom = document.getElementById('chart');
-      const myChart = echarts.init(chartDom);
-      let option;
+      myChart.value = echarts.init(chartDom);
+      await fetchData();
+    });
+
+    const fetchData = async (searchKeyword = '') => {
+      const $kgInstance = axios.create({
+        baseURL: 'http://localhost:9010', 
+        timeout: 5000,
+      });
 
       try {
-        const response = await $axios.get('/api/graph');
+        const response = await $kgInstance.get('/api/graph', {
+          params: { keyword: searchKeyword }
+        });
         const data = response.data;
 
-        option = {
+        const categories = [
+          { name: 'OldPerson', itemStyle: { color: '#FF4500' } },
+          { name: 'Volunteer', itemStyle: { color: '#32CD32' } },
+          { name: 'Employee', itemStyle: { color: '#1E90FF' } },
+          { name: 'Event', itemStyle: { color: '#FFD700' } }
+        ];
+
+        const linkColorMap = {
+          'ASSOCIATES_WITH': '#FF4500',
+          'HELP': '#32CD32',
+          'INVOLVES': '#1E90FF'
+        };
+
+        const option = {
           title: {
-            text: 'Knowledge Graph',
+            text: '老人-工作人员-义工-事件知识图谱',
           },
-          tooltip: {},
+          tooltip: {
+            trigger: 'item',
+            formatter: (params) => {
+              if (params.dataType === 'node') {
+                return `
+                  <strong>${params.data.name}</strong><br>
+                  ${Object.keys(params.data.properties).map(key => `${key}: ${params.data.properties[key]}`).join('<br>')}
+                `;
+              } else {
+                return `${params.data.source} ${params.data.type} ${params.data.target}`;
+              }
+            },
+            position: function (point, params, dom, rect, size) {
+              return [point[0] + 10, point[1] - 10];
+            }
+          },
           legend: [{
-            data: ['OldPerson', 'Volunteer', 'Employee', 'Event']
+            data: categories.map(a => a.name)
           }],
           series: [{
             type: 'graph',
             layout: 'force',
-            symbolSize: 50,
+            symbolSize: 10, // 进一步减少符号大小
             roam: true,
             label: {
-              show: true
-            },
-            force: {
-              repulsion: 1000
+              show: true,
+              position: 'right'
             },
             edgeSymbol: ['circle', 'arrow'],
             edgeSymbolSize: [4, 10],
             edgeLabel: {
-              fontSize: 20
+              fontSize: 12
             },
-            data: data.nodes,
-            links: data.links,
-            categories: [
-              { name: 'OldPerson' },
-              { name: 'Volunteer' },
-              { name: 'Employee' },
-              { name: 'Event' }
-            ],
+            data: data.nodes.map(node => {
+              const category = node.labels[0];
+              return {
+                ...node,
+                category,
+                itemStyle: {
+                  color: categories.find(cat => cat.name === category)?.itemStyle.color
+                }
+              };
+            }),
+            links: data.links.map(link => {
+              return {
+                ...link,
+                lineStyle: {
+                  color: linkColorMap[link.type] || '#000000'
+                }
+              };
+            }),
+            categories,
             lineStyle: {
-              color: 'source',
               curveness: 0.3
             }
           }]
         };
 
-        myChart.setOption(option);
+        myChart.value.setOption(option);
       } catch (error) {
         console.error(error);
       }
-    });
+    };
+
+    const search = () => {
+      fetchData(keyword.value);
+    };
+
+    return {
+      keyword,
+      search
+    };
   }
 }
 </script>
+
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+}
+</style>
