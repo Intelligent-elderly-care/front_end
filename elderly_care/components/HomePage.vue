@@ -9,6 +9,8 @@
             <Face v-if="currentPage === 'face'" />
             <FallOver v-if="currentPage === 'fallOver'" />
             <Settings v-if="currentPage === 'settings'" />
+            <Game v-if="currentPage === 'happy'" />
+            <Danger v-if="currentPage === 'danger'" />
         </div>
     </div>
 </template>

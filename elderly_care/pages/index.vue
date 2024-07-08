@@ -1,7 +1,7 @@
 <template style="overflow: hidden;">
   <div id="container">
     <div id="content">
-      <h2 style="position: relative;font-weight: bold;font-size: 22px;left: 20vh;top: 8vh;width: 10vh;" id="title">登录</h2>
+      <h2 style="position: relative;font-weight: bold;font-size: 22px;left: 10vw;top: 8vh;width: 10vh;" id="title">登录</h2>
       <div id="username" style="position: relative;left: 5vw;top: 12vh;width: 30vh;">
         <a-input v-model:value="username" placeholder="请输入用户名" style="width: 30vh;">
           <template #prefix>
@@ -23,9 +23,9 @@
     </div>
     
     <div id="mask">
-      <p id="p1" style="position: relative;font-weight: 600;font-size: 20px;color: aliceblue;left: 8vw;top: 30%;" >你好, 新朋友!</p>
-      <p id="p2" style="position: relative;font-weight: 200;font-size: 12px;color: aliceblue;left: 3vw;top: 35%;" >注册您的个人信息, 以获取网站的所有功能</p>
-      <a-button ghost id="btn_2" @click="move" style="position: relative;color: aliceblue;left: 36%;top: 40%;">开始注册</a-button>
+      <p id="p1" style="transition: 1s;position: relative;font-weight: 600;font-size: 20px;color: aliceblue;left: 12vw;top: 35%;" >你好, 新朋友!</p>
+      <p id="p2" style="transition: 1s;position: relative;font-weight: 200;font-size: 12px;color: aliceblue;left: 5vw;top: 40%;" >注册您的个人信息, 以获取网站的所有功能</p>
+      <a-button ghost id="btn_2" @click="move" style="transition: 1s;position: relative;color: aliceblue;left: 14vw;top: 45%;">开始注册</a-button>
     </div>
   </div>
 </template>
@@ -121,7 +121,7 @@ export default {
               mask.style.borderBottomRightRadius = '25%';
               
               title.style.transition = '1s';
-              title.style.left = '70vh';
+              title.style.left = '35vw';
               title.innerText = "注册";
 
               username.style.transition = '1s';
@@ -139,9 +139,12 @@ export default {
               btn.innerText = "注册";
 
               p1.innerText = '欢迎回来!';
-              p2.innerText = '注册您的个人信息, 以获取网站的所有功能';
+              p1.style.left = '5vw'
+              p2.innerText = '请输入详细信息以使用网站的所有功能';
+              p2.style.left = '5vw';
 
               btn_2.innerText = '开始登录';
+              btn_2.style.left = '5vw';
             }, 0);
           }
           else if(this.formMode == 1) {
@@ -154,7 +157,7 @@ export default {
               mask.style.borderBottomRightRadius = '20px';
               
               title.style.transition = '1s';
-              title.style.left = '20vh';
+              title.style.left = '10vw';
               title.innerText = "登录";
 
               username.style.transition = '1s';
@@ -172,9 +175,11 @@ export default {
               btn.innerText = "登录";
 
               p1.innerText = '你好, 新朋友!';
-              p2.innerText = '请输入详细信息以使用网站的所有功能';
+              p1.style.left = '12vw'
+              p2.innerText = '注册您的个人信息, 以获取网站的所有功能';
 
               btn_2.innerText = '开始注册';
+              btn_2.style.left = '14vw';
             }, 0);
           }
           

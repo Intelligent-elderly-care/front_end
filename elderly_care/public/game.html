@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海底大战</title>
+    <style>
+        /* 样式重置 */
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        canvas {
+            border: 1px solid rgb(0, 85, 255);
+
+        }
+
+        #container {
+            width: 960px;
+            height: 540px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <canvas id="canvas" width="960px" height="540px" tabindex="0"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.querySelector("#canvas");
+        // 利用画布初始化一个2D的画笔
+        const context = canvas.getContext("2d");
+
+        // 定义游戏状态
+        const START = 0;
+        const STARTING = 1;
+        const RUNNING = 2;
+        const PAUSE = 3;
+        const END = 4;
+        const WIN = 5;
+
+        // 加载背景图片; 图片初始化代码是异步的
+        const background_img = new Image();
+        background_img.src = "./img/background.png";
+
+        // 图片LOGO
+        const logo = new Image();
+        logo.src = "./img/logo.png";
+
+        // 加载动画图片
+        const load_img = new Image();
+        load_img.src = "./img/load.png";
+
+        // 英雄图片
+        const hero_img = new Image();
+        hero_img.src = "./img/hero.png";
+
+        // 受伤和死亡图片
+        const hurt_img = new Image();
+        hurt_img.src = "./img/hurt.png";
+        const death_img = new Image();
+        death_img.src = "./img/death.png";
+
+        // 英雄攻击图片
+        const attack_img = new Image();
+        attack_img.src = "./img/attack.png";
+
+        // 子弹图片
+        const axe1_img = new Image();
+        axe1_img.src = "./img/axe.png";
+
+        // 2级子弹图片
+        const axe2_img = new Image();
+        axe2_img.src = "./img/axe2.png";
+        
+
+        // 敌人图片
+        const enemy1_img = new Image();
+        enemy1_img.src ="./img/enemy1.png";
+        const enemy1_hurt_img = new Image();
+        enemy1_hurt_img.src ="./img/enemy1_hurt.png";
+        const enemy1_death_img = new Image();
+        enemy1_death_img.src ="./img/enemy1_death.png";
+
+        const enemy2_img = new Image();
+        enemy2_img.src ="./img/enemy2.png";
+        const enemy2_hurt_img = new Image();
+        enemy2_hurt_img.src ="./img/enemy2_hurt.png";
+        const enemy2_death_img = new Image();
+        enemy2_death_img.src ="./img/enemy2_death.png";
+
+        const enemy3_img = new Image();
+        enemy3_img.src ="./img/enemy3.png";
+        const enemy3_hurt_img = new Image();
+        enemy3_hurt_img.src ="./img/enemy3_hurt.png";
+        const enemy3_death_img = new Image();
+        enemy3_death_img.src ="./img/enemy3_death.png";
+
+        const enemy4_img = new Image();
+        enemy4_img.src ="./img/enemy4.png";
+        const enemy4_hurt_img = new Image();
+        enemy4_hurt_img.src ="./img/enemy4_hurt.png";
+        const enemy4_death_img = new Image();
+        enemy4_death_img.src ="./img/enemy4_death.png";
+
+        const enemy5_img = new Image();
+        enemy5_img.src ="./img/enemy5.png";
+        const enemy5_hurt_img = new Image();
+        enemy5_hurt_img.src ="./img/enemy5_hurt.png";
+        const enemy5_death_img = new Image();
+        enemy5_death_img.src ="./img/enemy5_death.png";
+
+        const enemy6_img = new Image();
+        enemy6_img.src ="./img/enemy6.png";
+        const enemy6_hurt_img = new Image();
+        enemy6_hurt_img.src ="./img/enemy6_hurt.png";
+        const enemy6_death_img = new Image();
+        enemy6_death_img.src ="./img/enemy6_death.png";
+
+        // BOSS图片
+        const boss_img = new Image();
+        boss_img.src = "./img/boss.png";
+        const boss_hurt_img = new Image();
+        boss_hurt_img.src = "./img/boss_hurt.png";
+        const boss_death_img = new Image();
+        boss_death_img.src = "./img/boss_death.png";
+        const boss_move_img = new Image();
+        boss_move_img.src = "./img/boss_move.png";
+
+        // BOSS弹幕图片
+        const bullet_img = new Image();
+        bullet_img.src = "./img/bullet.png";
+
+        // GAME OVER图片
+        const game_over_img = new Image();
+        game_over_img.src = "./img/end.png"; 
+
+        // 游戏暂停图片
+        const pause_img = new Image();
+        pause_img.src = "./img/pause.png";
+
+        // -1图片
+        const one_img = new Image();
+        one_img.src = "./img/-1.png";
+
+        // 骷髅头图片
+        const die_img = new Image();
+        die_img.src = "./img/die.png";
+
+        // 游戏胜利图片
+        const win_img = new Image();
+        win_img.src = "./img/win.png";
+        
+
+        // 声明背景图片类
+        class Background {
+            // 构造函数
+            constructor(config){
+                // 静态属性
+                this.image = config.image;
+                this.width = config.width;
+                this.height = config.height;
+                // 画布绘制背景图片时的左上角坐标
+                this.x1 = 0;
+                this.y1 = 0;
+                this.x2 = this.width;
+                this.y2 = 0;
+                this.speed = config.speed;
+            }
+            
+            // 动态方法, 绘图方法
+            draw(context) {
+                // 参数一: 图片对象, 参数二: 图片左上角的X坐标, 参数三: 图片左上角的Y坐标, 参数四 & 参数五: 图片的宽度和高度
+                context.drawImage(this.image, this.x1--, this.y1, this.width, this.height);
+                context.drawImage(this.image, this.x2--, this.y2, this.width, this.height);
+                if(this.x2 <= 0){
+                    this.x1 = 0;
+                    this.x2 = this.width;
+                }
+            }
+        };
+
+        // 声明初始界面加载类
+        class Loading {
+            constructor(config){
+                this.image = config.image;
+                this.width = config.width;
+                this.height = config.height;
+                this.x = config.x;
+                this.y = config.y;
+                this.speed = config.speed;
+                this.lastTime = new Date().getTime();
+                this.index = 0;
+            }
+
+            judge(){
+                const currentTime = new Date().getTime();
+                if(currentTime - this.lastTime > this.speed){
+                    this.index++;
+                    if(this.index >= 6){
+                        // 更新状态
+                        state = RUNNING;
+                    }
+                    this.lastTime = currentTime;
+                    this.x = this.x + 30;
+                    this.y = this.y + 20;
+                }
+            }
+            
+            draw(context){
+                context.drawImage(this.image, this.index * 48, 0, 48, 48, this.x, this.y, 48, 48);
+            }
+        };
+
+        // 声明化英雄类
+        class Hero {
+            constructor(config){
+                this.image = config.hero;
+                this.hero = config.hero;
+                this.attack = config.attack;
+                this.hurt = config.hurt;
+                this.death = config.death;
+                this.width = config.width;
+                this.height = config.height;
+                this.x = config.x;
+                this.y = config.y;
+                this.live = true;
+                this.life = config.life;
+                this.lastTime = new Date().getTime();
+                this.speed = config.speed;
+                this.hero_index = 0; 
+                this.attack_index = 0;
+                this.hurt_index = -1;
+                this.death_index = -1;
+                this.swim_speed = config.swim_speed;
+                // 上次射击时间
+                this.lastShootTime = new Date().getTime();
+                // 射击间隔
+                this.shootInterval = 400;
+                // 子弹集合
+                this.AxeList = [];
+                // 游戏分数
+                this.score = 0;
+                // 英雄等级
+                this.level = 1;
+                // 英雄伤害
+                this.damage = 1;
+            }
+
+            judge(){
+              const currentTime = new Date().getTime();
+              if(currentTime - this.lastTime > this.speed){
+                if(this.image == this.hero){
+                    this.hero_index = (this.hero_index + 1) % 6;
+                }
+                if(this.image == this.attack){
+                    this.attack_index++;
+                    if(this.attack_index >= 6){
+                        this.attack_index = 0;
+                        this.image = this.hero;
+                    }
+                }
+                if(this.image == this.hurt){
+                    this.hurt_index++;
+                    if(this.hurt_index >= 3){
+                        this.hurt_index = -1;
+                        this.image = this.hero;
+                    }
+                }
+                if(this.image == this.death){
+                    this.death_index++;
+                    if(this.death_index >= 6){
+                        this.death_index = 5;
+                        state = END;
+                    }
+                }
+                this.lastTime = currentTime;
+              }
+            }
+
+            draw(context){
+                if(this.image == this.hero){
+                    context.drawImage(this.image, this.hero_index * 48, 0, 48, 48, this.x, this.y, this.width, this.height);
+                }
+                else if(this.image == this.attack){
+                    context.drawImage(this.image, this.attack_index * 48, 0, 48, 48, this.x, this.y, this.width, this.height);
+                }
+                else if(this.image == this.hurt){
+                    context.drawImage(one_img, 0, 0, 30, 30, this.x + 30, this.y - 15, 30, 30)
+                    context.drawImage(this.image, this.hurt_index * 48, 0, 48, 48, this.x, this.y, this.width, this.height);
+                }
+                else if(this.image == this.death){
+                    context.drawImage(die_img, 0, 0, 20, 20, this.x + 40, this.y - 15, 20, 20);
+                    context.drawImage(this.image, this.death_index * 48, 0, 48, 48, this.x, this.y, this.width, this.height);
+                }
+            }
+            // 射击
+            shoot(){
+                this.image = this.attack;
+                const currentTime = new Date().getTime();
+                if(currentTime - this.lastShootTime >= this.shootInterval){
+                    // 初始化子弹对象
+                    if(this.level == 1){
+                        let axe = new Axe(axe1_config, this.x + this.width, this.y + this.height/2);
+                        // 添加子弹到子弹集合中
+                        this.AxeList.push(axe);
+                        // 绘制子弹
+                        axe.draw(context);
+                    }
+                    else if(this.level >= 2){
+                        let axe = new Axe(axe2_config, this.x + this.width, this.y + this.height/2);
+                        // 添加子弹到子弹集合中
+                        this.AxeList.push(axe);
+                        // 绘制子弹
+                        axe.draw(context);
+                    }
+                
+                    this.lastShootTime = currentTime;
+                }
+            }
+
+            // 受伤
+            onHurt(){
+                this.life--;
+                this.image = this.hurt;
+                this.score -= 20;
+                if(this.life === 0) {
+                    this.live = false;
+                    this.image = this.death;
+                }
+            }
+        }
+
+        // 声明一个子弹类
+        class Axe {
+            constructor(config, x, y) {
+                this.image = config.image;
+                this.width = config.width;
+                this.height = config.height;
+                this.x = x;
+                this.y = y - this.height/2;
+                this.index = 0;
+                this.lastTime = new Date().getTime();
+                // 斧头旋转速度
+                this.rotateSpeed = config.rotateSpeed;
+            }
+
+            judge() {
+                const currentTime = new Date().getTime();
+                if(currentTime - this.lastTime >= this.rotateSpeed){
+                    this.index = (this.index + 1) % 8;
+                    this.lastTime = currentTime;
+                }
+
+            }
+
+            // 斧头移动方法
+            move() {
+                this.x += 3; 
+            }
+
+            draw(context) {
+                context.drawImage(this.image, this.index * this.width, 0, this.width, this.height, this.x, this.y, this.width, this.height);
+            }
+
+            // 判断斧头是否飞出屏幕
+            outOfBounds() {
+                return this.x >= background.width;
+            }
+
+        }
+        
+        // 声明敌人类
+        class Enemy {
+            constructor(config){
+                this.image = config.image;
+                this.enemy = config.image;
+                this.hurt = config.hurt;
+                this.death = config.death;
+                // 敌人类型
+                this.type = config.type;
+                this.width = config.width;
+                this.height = config.height;
+                // 敌人位置
+                this.x = background.width;
+                this.y = Math.random() * (background.height - config.height);
+                // 敌人生命值
+                this.life = config.life;         
+                this.live = true;
+                this.score = config.score;
+                // this.minSpeed = config.minSpeed;
+                // this.maxSpeed = config.maxSpeed;
+                // 生成一个再最大速度和最小速度之间的一个值
+                this.swim_speed = Math.floor(Math.random() * (config.maxSpeed - config.minSpeed + 1)) + config.minSpeed;
+                this.index = 0; // maxIndex
+                this.maxIndex = config.maxIndex;  
+                this.hurt_index = -1;  // 2
+                this.death_index = 6; // 6
+                // 敌人待机动作速度
+                this.speed = 200;
+                this.lastTime = new Date().getTime();
+            }
+
+            judge() {
+                const currentTime = new Date().getTime();
+                if(currentTime - this.lastTime >= this.speed){
+                    if(this.image == this.enemy){
+                        this.index = (this.index + 1) % this.maxIndex;
+                    }
+                    else if(this.image == this.hurt){
+                        this.hurt_index++;
+                        if(this.hurt_index >= 2){
+                            this.image = this.enemy;
+                            this.hurt_index = -1;
+                        }   
+                    }
+                    else if(this.image == this.death){
+                        this.death_index--;
+                        if(this.death_index <= -1){
+                            let i = enemies.indexOf(this);
+                            enemies.splice(i, 1)
+                        }
+                    }
+                    
+                    this.lastTime = currentTime; 
+                }  
+            }
+
+            move() {
+                this.x -= this.swim_speed;
+            }
+
+            draw(context) {
+                if(this.image == this.enemy){
+                    context.drawImage(this.image, this.index * this.width, 0, this.width, this.height, this.x, this.y, this.width, this.height);
+                }
+                else if(this.image == this.hurt){
+                    context.drawImage(this.image, this.hurt_index * this.width, 0, this.width, this.height, this.x, this.y, this.width, this.height);
+                }
+                else if(this.image == this.death){
+                    context.drawImage(this.image, this.death_index * this.width, 0, this.width, this.height, this.x, this.y, this.width, this.height);
+                }
+                
+            }
+
+            onHurt() {
+                // 中弹
+                this.life -= hero.damage;
+                this.image = this.hurt;
+                if(this.life <= 0){
+                    this.live = false;
+                    // 播放死亡动画
+                    this.image = this.death;
+                    hero.score += this.score;
+                }
+            }
+
+            // 检测敌人是否碰撞到其他物体
+            Hit(object) {
+                let en_left = this.x;
+                let en_right = this.x + this.width;
+                let en_up = this.y;
+                let en_down = this.y + this.height;
+
+                let ob_left = object.x;
+                let ob_right = object.x + object.width;
+                let ob_up = object.y;
+                let ob_down = object.y + object.height;
+
+                // 判断是否有碰撞
+                if((ob_right < en_left) || (ob_down < en_up) || (ob_left > en_right) || (ob_up > en_down)){
+                    return false;
+                }   
+                else {
+                    return true;
+                }
+            }
+
+            outOfBounds(){
+                return this.x <= -this.width;
+            }
+        }
+
+        class Boss {
+            constructor(config){
+                this.image = config.boss;
+                this.boss = config.boss;
+                this.hurt = config.hurt;
+                this.death = config.death;
+                this.move = config.move;
+                this.width = config.width;
+                this.height = config.height;
+                this.x = background.width;
+                this.y = (background.height-96)/2;
+                this.life = 100;
+                this.live = true;
+                this.lastTime = new Date().getTime();
+                this.speed = 200;  // 待机动画速度
+                this.swim_speed = 3;  // 移动速度
+                this.index = 0; // 4
+                this.hurt_index = -1; // 2
+                this.death_index = 6;  // 6
+                this.maxIndex = 4;
+                this.score = 5000;
+                // 定义boss的状态, 0是入场, 1是待机, 2是移动, 3是攻击
+                this.condition = 0;
+                // 最后一次切换状态时间
+                this.lastCondintionTime = new Date().getTime();
+                this.lastMove = "left";
+                this.moveIndex = 0;
+            };
+
+            judge() {
+                const currentTime = new Date().getTime();
+                if(currentTime - this.lastTime >= this.speed){
+                    if(this.image == this.boss){
+                        this.index = (this.index + 1) % this.maxIndex;
+                    }
+                    else if(this.image == this.hurt){
+                        this.hurt_index++;
+                        if(this.hurt_index >= 2){
+                            this.image = this.boss;
+                            this.hurt_index = -1;
+                        }   
+                    }
+                    else if(this.image == this.death){
+                        this.death_index--;
+                        if(this.death_index <= -1){
+                            state = WIN;
+                        }
+                    }
+                    this.lastTime = currentTime; 
+                }  
+            }
+
+            moving() {
+                if(this.condition == 0){
+                    // boss入场
+                    if(this.x >= background.width/2) {
+                        this.x -= this.swim_speed;
+                    }
+                    else {
+                        this.lastCondintionTime = new Date().getTime();
+                        this.condition = 1;
+                    }
+                }
+                else if(this.condition == 1) {
+                    // boss待机
+                    // 待机时间为1秒到2秒
+                    let time = Math.floor(Math.random() * (2000 - 1000) + 1000);
+                    let currentTime = new Date().getTime();
+                    if(currentTime - this.lastCondintionTime >= time) {
+                        // 随机行为: 2/3
+                        let condition = Math.floor(Math.random() * 100);
+                        if(condition >= 0 && condition <50){
+                            // 移动
+                            this.condition = 2;
+                        }
+                        else{
+                            // 攻击
+                            // this.condition = 3;
+                        }
+                        this.lastCondintionTime = currentTime;
+                    }
+                }
+                else if(this.condition == 2){
+                    // boss移动
+                    // 随机移动时间, 2s-4s
+                    let random_move_time = Math.floor(Math.random() * (4000 - 2000) + 2000);
+                    let currentTime = new Date().getTime();
+                    if(currentTime - this.lastCondintionTime <= random_move_time){
+                        if(this.moveIndex <= 0){
+                            // 四个方向随机移动
+                            let r = Math.floor(Math.random() * 100);
+                            if(r >= 0 && r < 25){
+                                this.lastMove = "left";
+                                // 随机移动时间, 1秒到2秒
+                                this.moveIndex = Math.floor(Math.random() * (2 - 1) + 1) * 100;
+                            }
+                            else if(r >= 25 && r < 50){
+                                this.lastMove = "right";
+                                // 随机移动时间, 1秒到2秒
+                                this.moveIndex = Math.floor(Math.random() * (2 - 1) + 1) * 100;
+                            }
+                            else if(r >= 50 && r < 75){
+                                this.lastMove = "up";
+                                // 随机移动时间, 1秒到2秒
+                                this.moveIndex = Math.floor(Math.random() * (2 - 1) + 1) * 100;
+                            }
+                            else if(r >= 75 && r < 100){
+                                this.lastMove = "down";
+                                // 随机移动时间, 1秒到2秒
+                                this.moveIndex = Math.floor(Math.random() * (2 - 1) + 1) * 100;
+                            }
+                        }
+                        else{
+                            if(this.lastMove == "left"){
+                                this.x -= this.swim_speed;
+                                if(this.x <= 0){
+                                    this.x = 0;
+                                    this.moveIndex = 0;
+                                }
+                                else{
+                                    this.moveIndex--;
+                                }
+                                
+                            }
+                            else if(this.lastMove == "right"){
+                                this.x += this.swim_speed;
+                                if(this.x >= background.width - this.width){
+                                    this.x = background.width - this.width;
+                                    this.moveIndex = 0;
+                                }
+                                else {
+                                    this.moveIndex--;
+                                }
+                                
+                            }
+                            else if(this.lastMove == "up"){
+                                this.y -= this.swim_speed;
+                                if(this.y <= 0){
+                                    this.y = 0;
+                                    this.moveIndex = 0;
+                                }
+                                else {
+                                    this.moveIndex--;
+                                }
+                                
+                            }
+                            else if(this.lastMove == "down"){
+                                this.y += this.swim_speed;
+                                if(this.y >= background.height - this.height){
+                                    this.y = background.height - this.height;
+                                    this.moveIndex = 0;
+                                }
+                                else {
+                                    this.moveIndex--;
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        // 随机行为: 2/3
+                        let condition = Math.floor(Math.random() * 100);
+                        if(condition >= 0 && condition <20){
+                            // 待机
+                            this.condition = 1;
+                        }
+                        else if(condition >= 20 && condition < 60) {
+                            // 移动
+                            this.condition = 2;
+                        }
+                        else if(condition >= 60 && condition < 100) {
+                            // 攻击
+                            this.condition = 2;
+                        }
+                        this.lastCondintionTime = currentTime;
+                    }
+                }
+            }
+
+
+            draw(context) {
+                if(this.image == this.boss){
+                    context.drawImage(this.image, this.index * this.width, 0, this.width, this.height, this.x, this.y, this.width, this.height);
+                }
+                else if(this.image == this.hurt){
+                    context.drawImage(this.image, this.hurt_index * this.width, 0, this.width, this.height, this.x, this.y, this.width, this.height);
+                }
+                else if(this.image == this.death){
+                    context.drawImage(this.image, this.death_index * this.width, 0, this.width, this.height, this.x, this.y, this.width, this.height);
+                }
+                
+            }
+
+            onHurt() {
+                // 中弹
+                this.life -= hero.damage;
+                this.image = this.hurt;
+                if(this.life <= 0){
+                    this.live = false;
+                    // 播放死亡动画
+                    this.image = this.death;
+                    hero.score += this.score;
+                }
+            }
+
+            // 检测敌人是否碰撞到其他物体
+            Hit(object) {
+                let en_left = this.x;
+                let en_right = this.x + this.width;
+                let en_up = this.y;
+                let en_down = this.y + this.height;
+
+                let ob_left = object.x;
+                let ob_right = object.x + object.width;
+                let ob_up = object.y;
+                let ob_down = object.y + object.height;
+
+                // 判断是否有碰撞
+                if((ob_right < en_left) || (ob_down < en_up) || (ob_left > en_right) || (ob_up > en_down)){
+                    return false;
+                }   
+                else {
+                    return true;
+                }
+            }
+
+        }
+
+
+        // 类的配置变量
+        const background_config = {
+            image: background_img,
+            width: 960,
+            height: 540,
+            speed: 10,
+        };
+        const loading_config = {
+            image: load_img,
+            width: 288,
+            height: 48,
+            x: 0,
+            y: 0,
+            speed: 200,
+        };
+        const hero_config = {
+            hero: hero_img,
+            hurt: hurt_img,
+            attack: attack_img,
+            death: death_img,
+            life: 6,
+            width: 48,
+            height: 48,
+            x: 150,
+            y: 100,
+            speed: 150,
+            swim_speed: 1.5,
+        };
+        const axe1_config = {
+            image: axe1_img,
+            width: 60,
+            height: 60,
+            rotateSpeed: 80,
+        };
+        const axe2_config = {
+            image: axe2_img,
+            width: 60,
+            height: 60,
+            rotateSpeed: 80,
+        };
+        const enemy1_config = {
+            image: enemy1_img,
+            hurt: enemy1_hurt_img,
+            death: enemy1_death_img,
+            type: 1,
+            width: 48,
+            height: 48,
+            life: 2,
+            score: 10,
+            minSpeed: 2,
+            maxSpeed: 3,
+            maxIndex: 4,
+        };
+        const enemy2_config = {
+            image: enemy2_img,
+            hurt: enemy2_hurt_img,
+            death: enemy2_death_img,
+            type: 2,
+            width: 48,
+            height: 48,
+            life: 6,
+            score: 30,
+            minSpeed: 1,
+            maxSpeed: 2,
+            maxIndex: 6,
+        };
+        const enemy3_config = {
+            image: enemy3_img,
+            hurt: enemy3_hurt_img,
+            death: enemy3_death_img,
+            type: 3,
+            width: 48,
+            height: 48,
+            life: 3,
+            score: 50,
+            minSpeed: 3,
+            maxSpeed: 5,
+            maxIndex: 4,
+        };
+        const enemy4_config = {
+            image: enemy4_img,
+            hurt: enemy4_hurt_img,
+            death: enemy4_death_img,
+            type: 4,
+            width: 48,
+            height: 48,
+            life: 4,
+            score: 40,
+            minSpeed: 2,
+            maxSpeed: 3,
+            maxIndex: 4,
+        };
+        const enemy5_config = {
+            image: enemy5_img,
+            hurt: enemy5_hurt_img,
+            death: enemy5_death_img,
+            type: 5,
+            width: 48,
+            height: 48,
+            life: 5,
+            score: 80,
+            minSpeed: 3,
+            maxSpeed: 5,
+            maxIndex: 6,
+        };
+        const enemy6_config = {
+            image: enemy6_img,
+            hurt: enemy6_hurt_img,
+            death: enemy6_death_img,
+            type: 6,
+            width: 48,
+            height: 48,
+            life: 8,
+            score: 80,
+            minSpeed: 3,
+            maxSpeed: 6,
+            maxIndex: 6,
+        };
+        const boss_config = {
+            boss: boss_img,
+            hurt: boss_hurt_img,
+            death: boss_death_img,
+            move: boss_move_img,
+            width: 96,
+            height: 96,
+        }
+
+        const background = new Background(background_config);
+        const loading = new Loading(loading_config);
+        const hero = new Hero(hero_config);
+        const boss = new Boss(boss_config);
+
+        // 声明游戏状态
+        let state = START;
+
+        // boss是否生成
+        let is_boss_come = false;
+
+        // 为canvas绑定一个点击事件
+        canvas.addEventListener("click", ()=>{
+            if(state == START){
+                state = STARTING;
+            }
+            else if(state == END || state == WIN){
+                window.location.reload();
+            }
+        });
+
+        let left = 0;
+        let right = 0;
+        let up = 0;
+        let down = 0;
+        let fire = 0;
+        // 为canvas绑定键盘监听事件
+        canvas.addEventListener("keydown", function(event){
+          // 获取键码; A:65 ; D:68 ; W:87 ; S:83 ; 空格:32 ; P:80
+          var keycode = event.keyCode;
+          
+          if(keycode == 65){
+            left = 1;
+          }
+          if(keycode == 68){
+            right = 1;
+          }
+          if(keycode == 87){
+            up = 1;
+          }
+          if(keycode == 83){
+            down = 1;
+          }
+          if(keycode == 32){
+            fire = 1;
+          }
+          if(keycode == 80){
+            if(state === RUNNING){
+                state = PAUSE;
+            }
+            else if(state === PAUSE){
+                state = RUNNING;
+            }
+          }
+        });
+
+        // 为canvas绑定键盘监听事件
+        canvas.addEventListener("keyup", function(event){
+          var keycode = event.keyCode;
+          
+          if(keycode == 65){
+            left = 0;
+          }
+          if(keycode == 68){
+            right = 0;
+          }
+          if(keycode == 87){
+            up = 0;
+          }
+          if(keycode == 83){
+            down = 0;
+          }
+          if(keycode == 32){
+            fire = 0;
+          }
+        });
+
+
+        // 声明全局敌人的数组
+        let enemies = [];
+        // 产生速率
+        let enemy_interval = 800;
+        let enemy_last_time = new Date().getTime();
+        // 全局函数, 隔一段时间会初始化一定数量的敌人
+        function createEnemy(){
+            if(hero.score >= 0 && hero.score < 200){
+                enemy_interval = 600;
+                hero.level = 1;
+            }
+            else if(hero.score >= 200 && hero.score < 500){
+                enemy_interval = 400;
+                hero.level = 2;
+                hero.damage = 2;
+            }
+            else if(hero.score >= 500){
+                enemy_interval = 100;
+                hero.level = 3;
+                hero.shootInterval = 100;
+            }
+            if(hero.score >= 1000){
+                is_boss_come = true;
+            }
+            const currentTime = new Date().getTime();
+            // 隔一段时间初始化一个敌人
+            if(currentTime - enemy_last_time >= enemy_interval && is_boss_come == false){
+                // 随机产生1-100之间的一个数
+                const random = Math.floor(Math.random() * 100);
+                if(hero.level == 1){
+                    if(random < 50){
+                        enemies.push(new Enemy(enemy1_config));
+                    }
+                    else if(random >= 50 && random < 70){
+                        enemies.push(new Enemy(enemy2_config));
+                    }
+                    else if(random >= 70 && random < 100){
+                        enemies.push(new Enemy(enemy3_config));
+                    }
+                }
+                else if(hero.level >= 2){
+                    if(random < 15){
+                        enemies.push(new Enemy(enemy1_config));
+                    }
+                    else if(random >= 15 && random < 30){
+                        enemies.push(new Enemy(enemy2_config));
+                    }
+                    else if(random >= 30 && random < 50){
+                        enemies.push(new Enemy(enemy3_config));
+                    }
+                    else if(random >= 50 && random < 65){
+                        enemies.push(new Enemy(enemy4_config));
+                    }
+                    else if(random >= 65 && random < 80){
+                        enemies.push(new Enemy(enemy5_config));
+                    }
+                    else if(random >= 80 && random < 100){
+                        enemies.push(new Enemy(enemy6_config));
+                    }
+                }
+                
+                enemy_last_time = currentTime;
+            }
+        }
+
+        // 全局函数, 判断所有的子弹/敌人组件
+        function judgeComponent(){
+            for(let i = 0; i < hero.AxeList.length; i++){
+                hero.AxeList[i].move();
+            }
+
+            for(let i = 0; i < enemies.length; i++){
+                if(enemies[i].live){
+                    enemies[i].move();
+                }
+            }
+        }
+        
+        // 全局函数, 绘制所有的子弹/敌人组件 ; 绘制生命值和分数
+        function drawComponent(){
+            // 绘制所有子弹
+            for(let i = 0; i < hero.AxeList.length; i++){
+                hero.AxeList[i].judge();
+                hero.AxeList[i].draw(context);
+            }
+
+            // 绘制所有敌人
+            for(let i = 0; i < enemies.length; i++){
+                enemies[i].judge();
+                enemies[i].draw(context);
+            }
+
+            // 绘制生命值和分数
+            context.font = "20px FangSong";
+            // 参数一: 文本内容; 参数二: x坐标; 参数三: y坐标
+            context.fillText("生命值: "+hero.life, 80, 20);
+            context.fillText("等级: "+hero.level, background.width/2 - 50, 20);
+            context.fillText("分数: "+hero.score, background.width-150, 20);
+            context.fillText("操作说明: WASD移动, 空格攻击, P暂停", background.width/2-150, background.height - 10);
+        }
+
+        // 全局函数, 销毁所有的子弹/敌人组件
+        function deleteComponent(){
+            // 判断子弹是否飞出边界
+            for(let i = 0; i < hero.AxeList.length; i++){
+                if(hero.AxeList[i].outOfBounds()){
+                    // 删除数组中的元素, 第一个参数为操作位, 第二个为操作数
+                    hero.AxeList.splice(i, 1);
+                }
+            }
+            // 判断敌人是否出界
+            for(let i = 0; i < enemies.length; i++){
+                if(enemies[i].outOfBounds()){
+                    // 删除数组中的元素, 第一个参数为操作位, 第二个为操作数
+                    enemies.splice(i, 1);
+                }
+            }
+
+        }
+
+        // 全局函数, 碰撞检测
+        function checkHit() {
+            // 遍历所有的敌人
+            for(let i = 0; i < enemies.length; i++){
+                if(enemies[i].live){
+                    if(hero.live){
+                         // 判断是否和英雄发生碰撞
+                        if(enemies[i].Hit(hero)) {
+                            enemies[i].live = false;
+                            // 播放死亡动画
+                            enemies[i].image = enemies[i].death;
+                            hero.onHurt();
+                        }
+
+                        // 遍历所有的子弹
+                        for(let j = 0; j < hero.AxeList.length; j++){
+                            if(enemies[i].Hit(hero.AxeList[j])){
+                                hero.AxeList.splice(j, 1);
+                                enemies[i].onHurt();
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 检查boss的碰撞
+            if(is_boss_come){
+                if(hero.live){
+                    if(boss.Hit(hero)){
+                        hero.live = false;
+                        hero.image = hero.death;
+                    }
+                }
+
+                // 遍历所有的子弹
+                for(let i = 0; i < hero.AxeList.length; i++){
+                    if(boss.Hit(hero.AxeList[i])){
+                        hero.AxeList.splice(i, 1);
+                        boss.onHurt();
+                    }
+                }        
+            }
+            
+        }
+
+        // BOSS的AI
+        function boss_move() {
+            // 绘制boss
+            if(is_boss_come){
+                if(boss.live){
+                    boss.moving();
+                }
+                
+                boss.judge();
+                boss.draw(context);
+            }
+        }
+
+        // 当图片加载完毕后再执行的代码
+        // 会实时渲染整个canvas对象, 当游戏进入不同状态时会渲染不同的内容
+        background_img.addEventListener("load", ()=>{
+            // 每10ms调用一下
+            setInterval(()=>{
+                if(state == RUNNING && hero.live){
+                    if(left == 1){
+                        hero.x = hero.x - hero.swim_speed;
+                        if(hero.x <= 0){
+                            hero.x = 0;
+                        }
+                    }
+                    if(right == 1){
+                        hero.x = hero.x + hero.swim_speed;
+                        if(hero.x >= background.width - hero.width){
+                            hero.x = background.width - hero.width;
+                        }
+                    }
+                    if(up == 1){
+                        hero.y = hero.y - hero.swim_speed;
+                        if(hero.y <= 0){
+                            hero.y = 0;
+                        }
+                    }
+                    if(down == 1){
+                        hero.y = hero.y + hero.swim_speed;
+                        if(hero.y >= background.height - hero.height){
+                            hero.y = background.height - hero.height;
+                        }
+                    }
+                    if(fire == 1){
+                        hero.shoot();
+                    }
+                }
+                
+                switch(state){
+                    case START:
+                        // 渲染背景
+                        background.draw(context);
+                        // 渲染游戏LOGO
+                        context.drawImage(logo, (background.width - logo.naturalWidth)/2, (background.height - logo.naturalHeight)/2);
+                        break;
+                    case STARTING:
+                        background.draw(context);
+                        loading.judge();
+                        loading.draw(context);
+                        break;
+                    case RUNNING:
+                        background.draw(context);
+                        hero.judge();
+                        hero.draw(context);
+                        createEnemy();
+                        judgeComponent();
+                        drawComponent();
+                        deleteComponent();
+                        checkHit();
+                        boss_move();
+                        break;
+                    case PAUSE:
+                        // 渲染背景
+                        background.draw(context);
+                        hero.draw(context);
+                        drawComponent();
+                        // 渲染PAUSE
+                        context.drawImage(pause_img, (background.width - pause_img.naturalWidth)/2, (background.height - pause_img.naturalHeight)/2);
+                        break;
+                    case END:
+                        // 渲染背景
+                        background.draw(context);
+                        // 渲染GAME OVER
+                        context.drawImage(game_over_img, (background.width - game_over_img.naturalWidth)/2, (background.height - game_over_img.naturalHeight)/2);
+                        context.fillText("最终得分为: "+hero.score, background.width/2 - 80, background.height/2 - 50);
+                        break;
+                    case WIN:
+                        // 渲染背景
+                        background.draw(context);
+                        // 渲染GAME OVER
+                        context.drawImage(win_img, (background.width - win_img.naturalWidth)/2, (background.height - win_img.naturalHeight)/2);
+                        context.fillText("最终得分为: "+hero.score, background.width/2 - 80, background.height/2 - 50);
+                        break;
+                }
+            },10);
+        });
+    </script>
+    
+</body>
+</html>

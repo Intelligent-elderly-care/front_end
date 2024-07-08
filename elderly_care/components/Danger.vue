@@ -15,12 +15,13 @@
                     </div>
                 </div>
                 <div v-if="warn" style="position: absolute;left: 5.4vw;top: 23vh;">
-                    <img src="../assets/img/fall.png" style="width: 120px;height: 120px;">
+                    <img src="../assets/img/danger.png" style="width: 120px;height: 120px;">
                 </div>
                 <video ref="videoElement" autoplay playsinline id="camera"></video>
+                
                 <div style="position: absolute;right: 2.8vw;top: 20vh;display: flex;align-items: center;justify-content: center;flex-direction: column;gap: 3vh;">
                     <p style="font-weight: 500;font-size: 20px;">状态</p>
-                    <div v-if="warn" id="warning" style="font-weight: 500;font-size: 20px;text-align: center;line-height: 9vh;border-color: red;">检测到摔倒行为!!!</div>
+                    <div v-if="warn" id="warning" style="font-weight: 500;font-size: 20px;text-align: center;line-height: 9vh;border-color: red;">检测到危险物品!!!</div>
                     <div v-else id="warning" style="font-weight: 500;font-size: 20px;text-align: center;line-height: 9vh;border-color: green;">正常</div>
                 </div>
                 <div id="draw"></div>
@@ -36,7 +37,7 @@
 import axios from 'axios';
 import { message } from 'ant-design-vue';
 export default {
-    name: 'Fall',
+    name: 'Danger',
     data() {
         return {
             intervalId: null,
@@ -47,7 +48,7 @@ export default {
                 "event_type": 3,
                 "event_date": "",
                 "event_location": "起居室",
-                "event_desc": "检测到摔倒行为",
+                "event_desc": "检测到危险物品",
                 "oldperson_id": 1001
             },
             url: 'http://localhost:9000/events/add',
@@ -114,10 +115,10 @@ export default {
             this.initCamera();
         },
         stop() {
+            clearInterval(this.intervalId);
             this.warn = false;
             this.cameraOn = false;
             this.stopCamera();
-            clearInterval(this.intervalId);
         },
         face() {
             const videoElement = this.$refs.videoElement;
@@ -138,38 +139,36 @@ export default {
                 const formData = new FormData();
                 formData.append('image', blob, 'snapshot.png');
 
-                const url = 'http://localhost:8090/upload';
+                const url = 'http://localhost:8100/upload';
                 axios.post(url, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 }).then((response)=>{
                     if(response.data.code == 0){
-                        const res = response.data.result[0];
-                        const lists = response.data.list;
-                        console.log('list: ',lists)
-                        if(res == 'fall'){
-                            vm.warn = true;
+                        let draw = document.getElementById('draw');
+                        if(response.data.boxes.length != 0) {
+                            console.log("检测到了危险物品"); 
                             vm.putEvent();
-                            console.log("摔倒啦啦啦!!!");
-                            setTimeout(2000);
-                        }
-                        else{
-                            vm.warn = false;
-                            console.log("正常姿态");
-                        }
-                        console.log(res);
-                        
-                        if(lists.length != 0){
-                            const list = lists[0];
-                            let draw = document.getElementById('draw');
+                            vm.warn = true;
+                            console.log('boxes: ', response.data.boxes);
+
+                            const list = response.data.boxes[0];
+
                             draw.style.left = (videoElement.offsetWidth - videoElement.videoWidth)/2 + list[0] + 'px';
                             draw.style.top = list[1] + 'px';
-                            draw.style.width = list[2] - list[0] + 'px';
-                            draw.style.height = list[3] - list[1] + 'px';
+                            draw.style.width = list[2] + 'px';
+                            draw.style.height = list[3] + 'px';
                             draw.style.display = 'block';
                         }
+                        else{
+                            draw.style.display = 'none';
+                            console.log("正常行为"); 
+                            vm.warn = false;
+                        }
                         
+                        
+
                     }
                     else{
                         console.log("捕获失败 :", response.data)
@@ -252,8 +251,8 @@ export default {
     border: 1px solid red;
     border-radius: 5px;
     position: absolute;
-    left: 0px;
-    top: 0px;
+    left: 280px;
+    top: 53px;
     z-index: 10;
     transition: 0.5s;
     text-align: center;
