@@ -69,65 +69,80 @@
         </div>
 
         <a-modal v-model:visible="isModalVisible" title="老人信息" @ok="handleSubmit" @cancel="isModalVisible = false">
-            <a-form :form="formRef" :rules="rules" layout="vertical">
-                <a-form-item label="名字" name="name" :rules="rules.name">
-                    <a-input v-model:value="currentForm.name" />
-                </a-form-item>
-                <a-form-item label="性别" name="gender">
-                    <a-input v-model:value="currentForm.gender" :rules="rules.gender"/>
-                </a-form-item>
-                <a-form-item label="手机号" name="phone" :rules="rules.phone">
-                    <a-input v-model:value="currentForm.phone" />
-                </a-form-item>
-                <a-form-item label="身份证" name="id_card" :rules="rules.id_card">
-                    <a-input v-model:value="currentForm.id_card" />
-                </a-form-item>
-                <a-form-item label="入院日期" name="checkin_date">
-                    <a-date-picker v-model:value="currentForm.checkin_date" show-time format="YYYY-MM-DD HH:mm:ss" />
-                </a-form-item>
-                <a-form-item label="出院日期" name="checkout_date">
-                    <a-date-picker v-model:value="currentForm.checkout_date" show-time format="YYYY-MM-DD HH:mm:ss" />
-                </a-form-item>
-                <a-form-item label="生日" name="birthday">
-                    <a-date-picker v-model:value="currentForm.birthday" show-time format="YYYY-MM-DD HH:mm:ss" />
-                </a-form-item>
-                <a-form-item label="头像" name="imgset_dir">
-                    <a-input v-model:value="currentForm.imgset_dir" />
-                </a-form-item>
-                <a-form-item label="房间号" name="room_number">
-                    <a-input v-model:value="currentForm.room_number" />
-                </a-form-item>
-                <a-form-item label="第一监护人名字" name="firstguardian_name">
+            <a-steps :current="currentStep" size="small" style="margin-bottom: 24px" @change="handleStepChange">
+                <a-step title="基本信息" />
+                <a-step title="监护人信息" />
+                <a-step title="健康状况" />
+            </a-steps>
+            <div v-if="currentStep === 0">
+                <a-form :form="formRef" :rules="rules" layout="vertical">
+                    <a-form-item label="名字" name="name" :rules="rules.name">
+                        <a-input v-model:value="currentForm.name" />
+                    </a-form-item>
+                    <a-form-item label="性别" name="gender">
+                        <a-input v-model:value="currentForm.gender" :rules="rules.gender" />
+                    </a-form-item>
+                    <a-form-item label="手机号" name="phone" :rules="rules.phone">
+                        <a-input v-model:value="currentForm.phone" />
+                    </a-form-item>
+                    <a-form-item label="身份证" name="id_card" :rules="rules.id_card">
+                        <a-input v-model:value="currentForm.id_card" />
+                    </a-form-item>
+                    <a-form-item label="入院日期" name="checkin_date">
+                        <a-date-picker v-model:value="currentForm.checkin_date" show-time format="YYYY-MM-DD HH:mm:ss" />
+                    </a-form-item>
+                    <a-form-item label="出院日期" name="checkout_date">
+                        <a-date-picker v-model:value="currentForm.checkout_date" show-time format="YYYY-MM-DD HH:mm:ss" />
+                    </a-form-item>
+                    <a-form-item label="生日" name="birthday">
+                        <a-date-picker v-model:value="currentForm.birthday" show-time format="YYYY-MM-DD HH:mm:ss" />
+                    </a-form-item>
+                    <a-form-item label="头像" name="imgset_dir">
+                        <a-input v-model:value="currentForm.imgset_dir" />
+                    </a-form-item>
+                    <a-form-item label="房间号" name="room_number">
+                        <a-input v-model:value="currentForm.room_number" />
+                    </a-form-item>
+                </a-form>
+            </div>
+            <div v-if="currentStep === 1">
+                <a-form :form="formRef" :rules="rules" layout="vertical">
+                    <a-form-item label="第一监护人名字" name="firstguardian_name">
                     <a-input v-model:value="currentForm.firstguardian_name" />
                 </a-form-item>
-                <a-form-item label="与第一监护人关系" name="firstguardian_relationship">
+                    <a-form-item label="与第一监护人关系" name="firstguardian_relationship">
                     <a-input v-model:value="currentForm.firstguardian_relationship" />
                 </a-form-item>
-                <a-form-item label="第一监护人电话" name="firstguardian_phone">
+                    <a-form-item label="第一监护人电话" name="firstguardian_phone">
                     <a-input v-model:value="currentForm.firstguardian_phone" />
                 </a-form-item>
-                <a-form-item label="第一监护人微信" name="firstguardian_wechat">
+                    <a-form-item label="第一监护人微信" name="firstguardian_wechat">
                     <a-input v-model:value="currentForm.firstguardian_wechat" />
                 </a-form-item>
-                <a-form-item label="第二监护人名字" name="secondguardian_name">
+                    <a-form-item label="第二监护人名字" name="secondguardian_name">
                     <a-input v-model:value="currentForm.secondguardian_name" />
                 </a-form-item>
-                <a-form-item label="与第二监护人关系" name="secondguardian_relationship">
+                    <a-form-item label="与第二监护人关系" name="secondguardian_relationship">
                     <a-input v-model:value="currentForm.secondguardian_relationship" />
                 </a-form-item>
-                <a-form-item label="第二监护人电话" name="secondguardian_phone">
+                    <a-form-item label="第二监护人电话" name="secondguardian_phone">
                     <a-input v-model:value="currentForm.secondguardian_phone" />
                 </a-form-item>
-                <a-form-item label="第二监护人微信" name="secondguardian_wechat">
+                    <a-form-item label="第二监护人微信" name="secondguardian_wechat">
                     <a-input v-model:value="currentForm.secondguardian_wechat" />
                 </a-form-item>
-                <a-form-item label="健康状况" name="health_state">
-                    <a-input v-model:value="currentForm.health_state" />
-                </a-form-item>
-                <a-form-item label="描述" name="description">
-                    <a-input v-model:value="currentForm.description" />
-                </a-form-item>
             </a-form>
+        </div>
+            <div v-if="currentStep === 2">
+                <a-form :form="formRef" :rules="rules" layout="vertical">
+                    <a-form-item label="健康状况" name="health_state">
+                    <a-input v-model:value="currentForm.health_state" />
+                    </a-form-item>
+                        <a-form-item label="描述" name="description">
+                        <a-input v-model:value="currentForm.description" />
+                    </a-form-item>
+                </a-form>
+            </div>
         </a-modal>
     </div>
 </template>
@@ -147,6 +162,7 @@ const data = ref([]);
 // 用于区分是新增信息还是修改信息
 const isUpdating = ref(false);
 const updateId = ref(0);
+const currentStep = ref(0);
 
 const loading = ref(true);
 
@@ -264,10 +280,8 @@ const handleReset = () => {
   loadData();
 };
 
-const resetForm = () => {
-  Object.keys(currentForm).forEach((key) => {
-    currentForm[key] = '';
-  });
+const handleStepChange = (current) => {
+    currentStep.value = current;
 };
 
 </script>

@@ -16,8 +16,6 @@
         <span>{{ username }}</span>
     </div>
     <div v-if="dropdownVisible" class="absolute right-4 top-16 bg-white text-black rounded-lg shadow-lg p-4">
-      <p>用户信息</p>
-      <hr class="my-2">
       <a href="#" @click="logout">注销</a>
     </div>
   </header>

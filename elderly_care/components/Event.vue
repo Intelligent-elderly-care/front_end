@@ -180,11 +180,4 @@ const handleReset = () => {
   searchText.value = '';
   loadData();
 };
-
-const resetForm = () => {
-  Object.keys(currentForm).forEach((key) => {
-    currentForm[key] = '';
-  });
-};
-
 </script>

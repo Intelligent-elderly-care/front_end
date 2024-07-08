@@ -43,7 +43,7 @@
                                 </li>
                                 <li>
                                     <button @click="setPage('event')" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-4 block w-full text-left rounded-md">
-                                        <Icon name="material-symbols:volunteer-activism" class="text-gray-100 mr-2" size="30"/>
+                                        <Icon name="healthicons:accident-and-emergency-outline" class="text-gray-100 mr-2" size="30"/>
                                         事件管理
                                     </button>
                                 </li>
@@ -80,7 +80,7 @@
                                 </li>
                                 <li>
                                     <button @click="setPage('danger'); closeAllMenus()" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-4 block w-full text-left rounded-md">
-                                        <Icon name="material-symbols:volunteer-activism" class="text-gray-100 mr-2" size="30"/>
+                                        <Icon name="jam:triangle-danger" class="text-gray-100 mr-2" size="30"/>
                                         危险物品检测
                                     </button>
                                 </li>
@@ -89,7 +89,7 @@
                         <li class="rounded-sm">
                             <button @click="toggleHappyMenu = !toggleHappyMenu" class="flex items-center justify-between w-full p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer">
                                 <div class="flex items-center space-x-3">
-                                    <Icon name="mage:camera" class="text-gray-100" size="30"/>
+                                    <Icon name="ph:game-controller" class="text-gray-100" size="30"/>
                                     <span class="text-gray-100">娱乐</span>
                                 </div>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-100 transform transition-transform" :class="{ 'rotate-180': toggleCameraMenu }">
@@ -99,7 +99,7 @@
                             <ul v-show="toggleHappyMenu" class="pl-4 pt-2 pb-1 text-sm">
                                 <li>
                                     <button @click="setPage('happy'); closeAllMenus()" class="text-gray-100 hover:text-white hover:bg-gray-600 cursor-pointer py-2 px-3 block w-full text-left rounded-md">
-                                        <Icon name="material-symbols:elderly" class="text-gray-100 mr-2" size="35"/>
+                                        <Icon name="streamline:food-fish-cook-cooking-fish-seafood-nutrition-food" class="text-gray-100 mr-2" size="35"/>
                                         海南大战
                                     </button>
                                 </li>
@@ -120,14 +120,14 @@
                         </li>
                         <li class="rounded-sm">
                             <button @click="setPage('knowledgeGraph')" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer w-full">
-                                <Icon name="mage:settings" class="text-gray-100" size="30"/>
+                                <Icon name="material-symbols:bubble-chart" class="text-gray-100" size="30"/>
                                 <span class="text-gray-100">知识图谱</span>
                             </button>
                         </li>
                         <li class="rounded-sm">
                             <button @click="setPage('settings')" class="flex items-center p-2 space-x-3 rounded-md hover:bg-gray-600 cursor-pointer w-full">
-                                <Icon name="mage:settings" class="text-gray-100" size="30"/>
-                                <span class="text-gray-100">系统设置</span>
+                                <Icon name="ion:information-circle-outline" class="text-gray-100" size="30"/>
+                                <span class="text-gray-100">用户信息</span>
                             </button>
                         </li>
                     </ul>
