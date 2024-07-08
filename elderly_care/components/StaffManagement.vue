@@ -55,6 +55,14 @@
                                 <a @click="handleDelete(record.id)" class="text-red-500 hover:text-red-700">删除</a>
                             </span>
                         </template>
+                        <template v-if="column.key === 'description'">
+                            <template v-if="record.description == null">
+                                <span>
+                                    <ExceptionOutlined />
+                                    暂无数据
+                                </span>
+                            </template>
+                        </template>
                     </template>
                 </a-table>
             </a-spin>

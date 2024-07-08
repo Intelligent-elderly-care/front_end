@@ -8,6 +8,20 @@
             </div>
         </div>
         <div class="bg-white shadow rounded-lg p-6 mb-6" style="width: 100%;">
+            <a-space style="display: flex;justify-content: center;align-items: center;margin-bottom: 2vh;">
+                <p style="font-size: 16px;">地点 :</p>
+                <a-select
+                v-model:value="city"
+                style="width: 120px"
+                :options="cityData.map(city => ({ value: city }))"
+                ></a-select>
+                <a-select
+                v-model:value="room"
+                style="width: 120px"
+                :options="rooms.map(room => ({ value: room }))"
+                ></a-select>
+            </a-space>
+
             <div class="mb-4" id="con" style="position: relative;">
                 <div v-if="!cameraOn">
                     <div id="off">
@@ -39,6 +53,7 @@
 <script>
 import axios from 'axios';
 import { message } from 'ant-design-vue';
+import { computed, ref, watch } from 'vue';
 export default {
     name: 'Login',
     data() {
@@ -309,7 +324,29 @@ export default {
         clearInterval(this.intervalId);
         clearInterval(this.delId);
         next();
-    }
+    },
+    setup() {
+        const cityData = ['北京', '武汉', '海南'];
+        const roomData = {
+            北京: ['养老院1', '养老院2', '养老院3'],
+            武汉: ['养老院4', '养老院5', '养老院6'],
+            海南: ['养老院7', '养老院8', '养老院9'],
+        };
+        const city = ref(cityData[0]);
+        const room = ref(roomData[city.value][0]);
+        const rooms = computed(() => {
+            return roomData[city.value];
+        });
+        watch(city, val => {
+            room.value = roomData[val][0];
+        });
+        return {
+            cityData,
+            rooms,
+            city,
+            room,
+        };
+    },
 }
 </script>
 
