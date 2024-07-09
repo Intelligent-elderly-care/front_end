@@ -1,8 +1,14 @@
 <template>
   <div style="display: flex; flex-direction: column; height: 100vh;">
-    <div style="padding: 10px;">
-      <input v-model="keyword" placeholder="输入关键词搜索" />
-      <button @click="search">搜索</button>
+    <div style="padding: 10px; display: flex; align-items: center;">
+      <select v-model="selectedEntity">
+        <option value="Employee">Employee</option>
+        <option value="OldPerson">OldPerson</option>
+        <option value="Volunteer">Volunteer</option>
+        <option value="Event">Event</option>
+      </select>
+      <input v-model="keyword" placeholder="输入关键词搜索" style="margin-left: 10px;" />
+      <button @click="search" style="margin-left: 10px;">搜索</button>
     </div>
     <div id="chart" style="flex-grow: 1;"></div>
   </div>
@@ -16,6 +22,7 @@ import axios from 'axios';
 export default {
   setup() {
     const keyword = ref('');
+    const selectedEntity = ref('Employee');
     const myChart = ref(null);
 
     onMounted(async () => {
@@ -24,7 +31,7 @@ export default {
       await fetchData();
     });
 
-    const fetchData = async (searchKeyword = '') => {
+    const fetchData = async (searchQuery = '') => {
       const $kgInstance = axios.create({
         baseURL: 'http://localhost:9010', 
         timeout: 5000,
@@ -32,7 +39,7 @@ export default {
 
       try {
         const response = await $kgInstance.get('/api/graph', {
-          params: { keyword: searchKeyword }
+          params: { query: searchQuery }
         });
         const data = response.data;
 
@@ -75,7 +82,7 @@ export default {
           series: [{
             type: 'graph',
             layout: 'force',
-            symbolSize: 10, // 进一步减少符号大小
+            symbolSize: 10,
             roam: true,
             label: {
               show: true,
@@ -118,11 +125,16 @@ export default {
     };
 
     const search = () => {
-      fetchData(keyword.value);
+      const entity = selectedEntity.value;
+      const queryKeyword = keyword.value ? `.*${keyword.value}.*` : '';
+      const query = `MATCH (n:${entity}) WHERE n.name =~ '${queryKeyword}' RETURN n LIMIT 25`;
+
+      fetchData(query);
     };
 
     return {
       keyword,
+      selectedEntity,
       search
     };
   }

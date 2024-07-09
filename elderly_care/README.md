@@ -1,3 +1,6 @@
+# 项目简介
+北京交通大学软件学院2024学期小学期实训项目，第14组
+
 # 项目配置
 - `create vite@latest my-vue-app --template vue`
 - `npm install -D tailwindcss postcss autoprefixer -f`
